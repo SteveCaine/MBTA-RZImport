@@ -14,3 +14,10 @@
 	#import <UIKit/UIKit.h>
 	#import <Foundation/Foundation.h>
 #endif
+
+// to save us from adding entire CL framework just for this one typedef
+// (seems 2nd __has_include() should be FALSE!?)
+#if defined(__has_include) && __has_include(<CoreLocation/CoreLocation.h>)
+typedef double CLLocationDegrees;
+typedef struct { CLLocationDegrees latitude; CLLocationDegrees longitude; } CLLocationCoordinate2D;
+#endif

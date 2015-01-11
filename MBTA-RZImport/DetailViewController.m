@@ -9,7 +9,7 @@
 #import "DetailViewController.h"
 
 @interface DetailViewController ()
-- (void)configureView;
+
 @end
 
 @implementation DetailViewController
@@ -27,7 +27,6 @@
 
 - (void)configureView {
 	// Update the user interface for the detail item.
-
 	if (self.detailItem) {
 		self.detailDescriptionLabel.text = [self.detailItem description];
 	}

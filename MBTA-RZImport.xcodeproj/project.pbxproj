@@ -22,6 +22,18 @@
 		8E4BD74A1A61AB1300B51B0B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7291A61AB1300B51B0B /* UIKit.framework */; };
 		8E4BD7521A61AB1300B51B0B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E4BD7501A61AB1300B51B0B /* InfoPlist.strings */; };
 		8E4BD7541A61AB1300B51B0B /* MBTA_RZImportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4BD7531A61AB1300B51B0B /* MBTA_RZImportTests.m */; };
+		8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8041A61C861007D37E7 /* ApiData.m */; };
+		8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8061A61C861007D37E7 /* ApiRoutes.m */; };
+		8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8081A61C861007D37E7 /* ApiStops.m */; };
+		8EBDE8141A61C861007D37E7 /* ApiTime.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE80A1A61C861007D37E7 /* ApiTime.m */; };
+		8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE80D1A61C861007D37E7 /* ServiceMBTA.m */; };
+		8EBDE8161A61C861007D37E7 /* ServiceMBTA_strings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */; };
+		8EBDE81E1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE81D1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m */; };
+		8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB291A61CD6500C55B5A /* RequestClient.m */; };
+		8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB2D1A61D7C000C55B5A /* EXTScope.m */; };
+		8EFBEB331A61DA3300C55B5A /* ApiRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB321A61DA3300C55B5A /* ApiRequest.m */; };
+		8EFBEB361A61DAD200C55B5A /* ApiTimeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */; };
+		8EFBEB3A1A61E3BC00C55B5A /* ApiData+RZImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB391A61E3BC00C55B5A /* ApiData+RZImport.m */; };
 		CD24D195C775130604AC385B /* libPods-MBTA-RZImport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */; };
 /* End PBXBuildFile section */
 
@@ -59,6 +71,34 @@
 		8E4BD74F1A61AB1300B51B0B /* MBTA-RZImportTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MBTA-RZImportTests-Info.plist"; sourceTree = "<group>"; };
 		8E4BD7511A61AB1300B51B0B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8E4BD7531A61AB1300B51B0B /* MBTA_RZImportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBTA_RZImportTests.m; sourceTree = "<group>"; };
+		8EBDE8031A61C861007D37E7 /* ApiData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData.h; sourceTree = "<group>"; };
+		8EBDE8041A61C861007D37E7 /* ApiData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiData.m; sourceTree = "<group>"; };
+		8EBDE8051A61C861007D37E7 /* ApiRoutes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiRoutes.h; sourceTree = "<group>"; };
+		8EBDE8061A61C861007D37E7 /* ApiRoutes.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiRoutes.m; sourceTree = "<group>"; };
+		8EBDE8071A61C861007D37E7 /* ApiStops.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiStops.h; sourceTree = "<group>"; };
+		8EBDE8081A61C861007D37E7 /* ApiStops.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiStops.m; sourceTree = "<group>"; };
+		8EBDE8091A61C861007D37E7 /* ApiTime.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiTime.h; sourceTree = "<group>"; };
+		8EBDE80A1A61C861007D37E7 /* ApiTime.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiTime.m; sourceTree = "<group>"; };
+		8EBDE80C1A61C861007D37E7 /* ServiceMBTA.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceMBTA.h; sourceTree = "<group>"; };
+		8EBDE80D1A61C861007D37E7 /* ServiceMBTA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceMBTA.m; sourceTree = "<group>"; };
+		8EBDE80E1A61C861007D37E7 /* ServiceMBTA_sensitive.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceMBTA_sensitive.h; sourceTree = "<group>"; };
+		8EBDE80F1A61C861007D37E7 /* ServiceMBTA_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceMBTA_strings.h; sourceTree = "<group>"; };
+		8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceMBTA_strings.m; sourceTree = "<group>"; };
+		8EBDE81C1A61CA5E007D37E7 /* ServiceMBTA+RZImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ServiceMBTA+RZImport.h"; sourceTree = "<group>"; };
+		8EBDE81D1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ServiceMBTA+RZImport.m"; sourceTree = "<group>"; };
+		8EFBEB281A61CD6500C55B5A /* RequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestClient.h; path = Client/RequestClient.h; sourceTree = "<group>"; };
+		8EFBEB291A61CD6500C55B5A /* RequestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RequestClient.m; path = Client/RequestClient.m; sourceTree = "<group>"; };
+		8EFBEB2C1A61D7C000C55B5A /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
+		8EFBEB2D1A61D7C000C55B5A /* EXTScope.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = EXTScope.m; sourceTree = "<group>"; };
+		8EFBEB2E1A61D7C000C55B5A /* metamacros.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = metamacros.h; sourceTree = "<group>"; };
+		8EFBEB311A61DA3300C55B5A /* ApiRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiRequest.h; path = Requests/ApiRequest.h; sourceTree = "<group>"; };
+		8EFBEB321A61DA3300C55B5A /* ApiRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiRequest.m; path = Requests/ApiRequest.m; sourceTree = "<group>"; };
+		8EFBEB341A61DAD200C55B5A /* ApiTimeRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiTimeRequest.h; path = Requests/ApiTimeRequest.h; sourceTree = "<group>"; };
+		8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiTimeRequest.m; path = Requests/ApiTimeRequest.m; sourceTree = "<group>"; };
+		8EFBEB371A61E1A400C55B5A /* ApiRequest_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiRequest_private.h; path = Requests/ApiRequest_private.h; sourceTree = "<group>"; };
+		8EFBEB381A61E3BC00C55B5A /* ApiData+RZImport.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "ApiData+RZImport.h"; sourceTree = "<group>"; };
+		8EFBEB391A61E3BC00C55B5A /* ApiData+RZImport.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "ApiData+RZImport.m"; sourceTree = "<group>"; };
+		8EFBEB3B1A61EA0100C55B5A /* ApiData_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData_private.h; sourceTree = "<group>"; };
 		EE414054C5551A8C196569B2 /* Pods-MBTA-RZImport.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.release.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -99,6 +139,8 @@
 		8E4BD7191A61AB1300B51B0B = {
 			isa = PBXGroup;
 			children = (
+				8EBDE8001A61C861007D37E7 /* Services */,
+				8EFBEB2B1A61D7C000C55B5A /* xtras */,
 				8E4BD72B1A61AB1300B51B0B /* MBTA-RZImport */,
 				8E4BD74D1A61AB1300B51B0B /* MBTA-RZImportTests */,
 				8E4BD7241A61AB1300B51B0B /* Frameworks */,
@@ -171,6 +213,89 @@
 				8E4BD7501A61AB1300B51B0B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8EBDE8001A61C861007D37E7 /* Services */ = {
+			isa = PBXGroup;
+			children = (
+				8EBDE8011A61C861007D37E7 /* MBTA-v2 */,
+			);
+			path = Services;
+			sourceTree = "<group>";
+		};
+		8EBDE8011A61C861007D37E7 /* MBTA-v2 */ = {
+			isa = PBXGroup;
+			children = (
+				8EFBEB271A61CCDE00C55B5A /* Client */,
+				8EBDE8021A61C861007D37E7 /* Data */,
+				8EFBEB301A61D9FB00C55B5A /* Requests */,
+				8EBDE80B1A61C861007D37E7 /* RZImport */,
+				8EBDE80C1A61C861007D37E7 /* ServiceMBTA.h */,
+				8EBDE80D1A61C861007D37E7 /* ServiceMBTA.m */,
+				8EBDE80E1A61C861007D37E7 /* ServiceMBTA_sensitive.h */,
+				8EBDE80F1A61C861007D37E7 /* ServiceMBTA_strings.h */,
+				8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */,
+			);
+			path = "MBTA-v2";
+			sourceTree = "<group>";
+		};
+		8EBDE8021A61C861007D37E7 /* Data */ = {
+			isa = PBXGroup;
+			children = (
+				8EBDE8031A61C861007D37E7 /* ApiData.h */,
+				8EFBEB3B1A61EA0100C55B5A /* ApiData_private.h */,
+				8EBDE8041A61C861007D37E7 /* ApiData.m */,
+				8EBDE8051A61C861007D37E7 /* ApiRoutes.h */,
+				8EBDE8061A61C861007D37E7 /* ApiRoutes.m */,
+				8EBDE8071A61C861007D37E7 /* ApiStops.h */,
+				8EBDE8081A61C861007D37E7 /* ApiStops.m */,
+				8EBDE8091A61C861007D37E7 /* ApiTime.h */,
+				8EBDE80A1A61C861007D37E7 /* ApiTime.m */,
+			);
+			path = Data;
+			sourceTree = "<group>";
+		};
+		8EBDE80B1A61C861007D37E7 /* RZImport */ = {
+			isa = PBXGroup;
+			children = (
+				8EBDE81C1A61CA5E007D37E7 /* ServiceMBTA+RZImport.h */,
+				8EBDE81D1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m */,
+				8EFBEB381A61E3BC00C55B5A /* ApiData+RZImport.h */,
+				8EFBEB391A61E3BC00C55B5A /* ApiData+RZImport.m */,
+			);
+			name = RZImport;
+			path = "../../../Services/MBTA-v2/RZImport";
+			sourceTree = "<group>";
+		};
+		8EFBEB271A61CCDE00C55B5A /* Client */ = {
+			isa = PBXGroup;
+			children = (
+				8EFBEB281A61CD6500C55B5A /* RequestClient.h */,
+				8EFBEB291A61CD6500C55B5A /* RequestClient.m */,
+			);
+			name = Client;
+			sourceTree = "<group>";
+		};
+		8EFBEB2B1A61D7C000C55B5A /* xtras */ = {
+			isa = PBXGroup;
+			children = (
+				8EFBEB2C1A61D7C000C55B5A /* EXTScope.h */,
+				8EFBEB2D1A61D7C000C55B5A /* EXTScope.m */,
+				8EFBEB2E1A61D7C000C55B5A /* metamacros.h */,
+			);
+			path = xtras;
+			sourceTree = "<group>";
+		};
+		8EFBEB301A61D9FB00C55B5A /* Requests */ = {
+			isa = PBXGroup;
+			children = (
+				8EFBEB311A61DA3300C55B5A /* ApiRequest.h */,
+				8EFBEB371A61E1A400C55B5A /* ApiRequest_private.h */,
+				8EFBEB321A61DA3300C55B5A /* ApiRequest.m */,
+				8EFBEB341A61DAD200C55B5A /* ApiTimeRequest.h */,
+				8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */,
+			);
+			name = Requests;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -305,10 +430,22 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				8EBDE8161A61C861007D37E7 /* ServiceMBTA_strings.m in Sources */,
+				8EFBEB361A61DAD200C55B5A /* ApiTimeRequest.m in Sources */,
 				8E4BD7361A61AB1300B51B0B /* AppDelegate.m in Sources */,
+				8EFBEB3A1A61E3BC00C55B5A /* ApiData+RZImport.m in Sources */,
+				8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */,
 				8E4BD73C1A61AB1300B51B0B /* MasterViewController.m in Sources */,
 				8E4BD7321A61AB1300B51B0B /* main.m in Sources */,
 				8E4BD73F1A61AB1300B51B0B /* DetailViewController.m in Sources */,
+				8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */,
+				8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */,
+				8EBDE8141A61C861007D37E7 /* ApiTime.m in Sources */,
+				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
+				8EBDE81E1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m in Sources */,
+				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
+				8EFBEB331A61DA3300C55B5A /* ApiRequest.m in Sources */,
+				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
