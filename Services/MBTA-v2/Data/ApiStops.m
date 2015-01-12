@@ -20,6 +20,16 @@
 @end
 
 @implementation ApiStop
+
+#if CONFIG_USE_RZImport
++ (NSDictionary *)rzi_customMappings {
+	return @{
+			 @"stop_id"   : @"ID",
+			 @"stop_name" : @"name",
+			 };
+}
+#endif
+
 - (CLLocationCoordinate2D) location {
 	CLLocationCoordinate2D result = {0,0};
 	if ([self.latitude length] && [self.longitude length]) {

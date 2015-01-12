@@ -8,13 +8,80 @@
 
 #import "ApiRoutes.h"
 
+#import "ApiData_private.h"
 #import "ApiStops.h"
 
 #import "ServiceMBTA_strings.h"
 
-// ----------------------------------------------------------------------
+//#import "NSObject+RZImport.h"
+//#import "RZImportable.h"
+
+#if CONFIG_USE_RZImport
+static ApiRoutes *sRoutes;
+#endif
+
+// --------------------------------------------------
+//#pragma mark -
+// --------------------------------------------------
+// map enum values to mode names
+static NSString * const strs_RouteMode[] = {
+	@"",	// unknown mode
+	@"Subway",
+	@"Rail",
+	@"Bus",
+	@"Boat"
+};
+NSUInteger num_strs_RouteMode = sizeof(strs_RouteMode)/sizeof(strs_RouteMode[0]);
+
+RouteMode mode_for_name(NSString *mode_name) {
+	RouteMode result = mode_unknown;
+	NSUInteger index = 0;
+	while (index < num_strs_RouteMode) {
+		if ([mode_name isEqualToString:strs_RouteMode[index]]) {
+			result = index;
+			break;
+		}
+		++index;
+	}
+	return result;
+}
+
+NSString *name_for_mode(RouteMode mode) {
+	if (mode < num_strs_RouteMode)
+		return strs_RouteMode[mode];
+	return nil;
+}
+
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
+#if CONFIG_USE_RZImport
+
+@implementation ApiRouteDirections
+@end
+
+#endif
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
 
 @implementation ApiRouteDirection
+
+#if CONFIG_USE_RZImport
++ (NSDictionary *)rzi_customMappings {
+	return @{
+			 @"direction_id"   : @"ID",
+			 @"direction_name" : @"name",
+			 };
+}
+- (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
+	if ([key isEqualToString:key_stop]) {
+		self.stops = [ApiStop rzi_objectsFromArray:value];
+		return NO;
+	}
+	return YES;
+}
+#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -31,9 +98,28 @@
 
 @end
 
-// ----------------------------------------------------------------------
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
 
 @implementation ApiRoute
+
+#if CONFIG_USE_RZImport
++ (NSDictionary *)rzi_customMappings {
+	return @{
+			 @"route_id"   : @"ID",
+			 @"route_name" : @"name",
+			 @"route_hide" : @"noUI"
+			 };
+}
+- (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
+	if ([key isEqualToString:key_direction]) {
+		self.directions = [ApiRouteDirection rzi_objectsFromArray:value];
+		return NO;
+	}
+	return YES;
+}
+#endif
 
 - (void)addStops_success:(void(^)(ApiRoute *route))success
 				 failure:(void(^)(NSError *error))failure {
@@ -49,6 +135,14 @@
 		NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
 }
+
+#if 0 //CONFIG_USE_RZImport
+- (NSArray *)directions {
+	return nil;
+}
+- (void)setDirections:(NSArray *)directions {
+}
+#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -68,9 +162,48 @@
 
 @end
 
-// ----------------------------------------------------------------------
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
 
 @implementation ApiRouteMode
+
+#if CONFIG_USE_RZImport
++ (id)rzi_existingObjectForDict:(NSDictionary *)dict {
+	if (sRoutes) {
+		NSString *str_route_type = [dict objectForKey:key_route_type];
+		NSString *mode_name = [dict objectForKey:key_mode_name];
+		
+		if ([str_route_type length] && [mode_name length]) {
+			NSNumber *route_type = [NSNumber numberWithInteger:[str_route_type integerValue]];
+			for (ApiRouteMode *mode in sRoutes.modes) {
+				if ([route_type compare:mode.type] == NSOrderedSame) {
+					if ([mode_name compare:mode.name] == NSOrderedSame) {
+						return mode;
+					}
+				}
+			}
+		}
+	}
+	return nil;
+}
++ (NSDictionary *)rzi_customMappings {
+	return @{
+			 @"route_type" : @"type",
+			 @"mode_name"  : @"name",
+			 };
+}
++ (NSArray *)rzi_nestedObjectKeys {
+	return @[ key_route ];
+}
+- (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
+	if ([key isEqualToString:key_route]) {
+		self.routes = [ApiRoute rzi_objectsFromArray:value];
+		return NO;
+	}
+	return YES;
+}
+#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -90,7 +223,20 @@
 
 @end
 
-// ----------------------------------------------------------------------
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
+
+@interface ApiRoutes ()
+// RZ
+// CALC
+@property (strong, nonatomic) NSMutableArray *all_routes;
+@property (strong, nonatomic) NSMutableDictionary *routes_by_mode_name;
+@end
+
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
 
 @implementation ApiRoutes
 
@@ -108,6 +254,13 @@
 	}];
 }
 
+//static ApiRoutes *sRoutes;
+//#if CONFIG_USE_RZImport
+//+ (id)rzi_existingObjectForDict:(NSDictionary *)dict {
+//	return sRoutes;
+//}
+//#endif
+
 - (ApiRoute *)routeByID:(NSString *)routeID {
 	ApiRoute *result = nil;
 	for (ApiRouteMode * mode in self.modes) {
@@ -123,6 +276,41 @@
 	return result;
 }
 
+- (instancetype)initWithJSON:(NSDictionary *)json {
+	self = [super init];
+	if (self) {
+#if !DEBUG_disableNewCode
+		NSArray *modes = [json objectForKey:key_mode];
+		_modes = [ApiRouteMode rzi_objectsFromArray:modes];
+		
+		_all_routes = [NSMutableArray array];
+		_routes_by_mode_name = [NSMutableDictionary dictionaryWithCapacity:num_strs_RouteMode-1];
+		
+		for (ApiRouteMode *mode in _modes) {
+			// set the 'mode' enum on every route this mode contains
+			RouteMode route_mode = mode_for_name(mode.name);
+			for (ApiRoute *route in mode.routes)
+				route.mode = route_mode;
+			
+			[_all_routes addObjectsFromArray:mode.routes];
+			
+			// in the case of Subway, this combines routes from both subway modes
+			NSMutableArray *mode_routes = [_routes_by_mode_name objectForKey:mode.name];
+			if (mode_routes == nil) {
+				mode_routes = [NSMutableArray arrayWithArray:mode.routes];
+				[_routes_by_mode_name setObject:mode_routes forKey:mode.name];
+			}
+			[mode_routes addObjectsFromArray:mode.routes];
+			
+		}
+#endif
+#if CONFIG_USE_RZImport
+		sRoutes = self;
+#endif
+	}
+	return self;
+}
+
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
 	if ([self.modes count]) {
@@ -136,7 +324,9 @@
 
 @end
 
-// ----------------------------------------------------------------------
+// --------------------------------------------------
+#pragma mark -
+// --------------------------------------------------
 
 @implementation ApiRoutesByStop
 

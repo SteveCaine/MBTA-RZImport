@@ -15,6 +15,15 @@
 	#import <Foundation/Foundation.h>
 #endif
 
+#define CONFIG_USE_RestKit	0
+#define CONFIG_USE_RZImport	1
+
+#if CONFIG_USE_RZImport
+	#define PROTOCOL_RZImportable <RZImportable>
+#else
+	#define PROTOCOL_RZImportable
+#endif
+
 // to save us from adding entire CL framework just for this one typedef
 // (seems 2nd __has_include() should be FALSE!?)
 #if defined(__has_include) && __has_include(<CoreLocation/CoreLocation.h>)

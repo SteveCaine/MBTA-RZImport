@@ -6,13 +6,23 @@
 //	Copyright (c) 2015 Steve Caine. All rights reserved.
 //
 
+#define CONFIG_get_not_request 0
+
+#if CONFIG_get_not_request
+#else
+#endif
+
+
 #import "MasterViewController.h"
 #import "DetailViewController.h"
 
 #import "ServiceMBTA.h"
 #import "ServiceMBTA_strings.h"
 
+#import "ApiRoutes.h"
 #import "ApiTime.h"
+
+#import "ApiRoutesRequest.h"
 #import "ApiTimeRequest.h"
 
 #import "EXTScope.h"
@@ -37,6 +47,9 @@ static NSString * const				test_stopID    = @"2021";
 
 @implementation MasterViewController
 
+
+// ----------------------------------------------------------------------
+#pragma mark -
 // ----------------------------------------------------------------------
 
 //	http://realtime.mbta.com/developer/api/v2/servertime?api_key=<myKey>&format=[json/xml]
@@ -44,6 +57,7 @@ static NSString * const				test_stopID    = @"2021";
 	@weakify(self)
 	ApiTimeRequest *request = [[ApiTimeRequest alloc] init];
 	[request refresh_success:^(ApiRequest *request) {
+		NSLog(@"\n\n%s servertime = %@\n\n", __FUNCTION__, [request response]);
 		@strongify(self)
 		[self show_success:[request response] verb:verb_servertime];
 	} failure:^(NSError *error) {
@@ -51,6 +65,22 @@ static NSString * const				test_stopID    = @"2021";
 		;
 		@strongify(self)
 		[self show_failure_verb:verb_servertime];
+	}];
+}
+
+//	http://realtime.mbta.com/developer/api/v2/routes?api_key=<myKey>&format=[json/xml]
+- (void)get_routes {
+	@weakify(self)
+	ApiRoutesRequest *request = [[ApiRoutesRequest alloc] init];
+	[request refresh_success:^(ApiRequest *request) {
+		NSLog(@"\n\n%s routes = %@\n\n", __FUNCTION__, [request response]);
+		@strongify(self)
+		[self show_success:[request response] verb:verb_routes];
+	} failure:^(NSError *error) {
+		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		;
+		@strongify(self)
+		[self show_failure_verb:verb_routes];
 	}];
 }
 
@@ -97,19 +127,31 @@ static NSString * const				test_stopID    = @"2021";
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
-	return 1;
+	return [ServiceMBTA verbCount];
 }
 
 - (UITableViewCell *)tableView:(UITableView *)tableView cellForRowAtIndexPath:(NSIndexPath *)indexPath {
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
-	cell.textLabel.text = @"servertime";
+	NSString *text = [ServiceMBTA verbForIndex:indexPath.row];
+	
+	switch (indexPath.row) {
+		case e_verb_servertime:
+			;
+			break;
+		case e_verb_routes:
+			break;
+		default:
+			break;
+	}
+	cell.textLabel.text = text;
 	cell.detailTextLabel.text = @"idle";
 
-//	if (should-be-disabled]) {
-//		cell.userInteractionEnabled = NO;
-//		cell.textLabel.textColor = [UIColor lightGrayColor];
-//	}
+	if (indexPath.row > e_verb_routes) {
+		cell.userInteractionEnabled = NO;
+		cell.textLabel.textColor = [UIColor lightGrayColor];
+		cell.detailTextLabel.textColor = [UIColor lightGrayColor];
+	}
 
 	UIActivityIndicatorView *spinner = [[UIActivityIndicatorView alloc] initWithActivityIndicatorStyle:UIActivityIndicatorViewStyleGray];
 	spinner.hidesWhenStopped = YES;
@@ -131,7 +173,18 @@ static NSString * const				test_stopID    = @"2021";
 
 - (void)tableView:(UITableView *)tableView didSelectRowAtIndexPath:(NSIndexPath *)indexPath {
 	// servertime
-#if 0
+#if 1
+	switch (indexPath.row) {
+		case e_verb_servertime:
+			[self get_servertime];
+			break;
+		case e_verb_routes:
+			[self get_routes];
+			break;
+		default:
+			break;
+	}
+#elif 0
 	@weakify(self)
 	[ApiTime get_success:^(ApiTime *servertime) {
 		NSLog(@"\n\n%s servertime = %@\n\n", __FUNCTION__, servertime);
@@ -166,8 +219,19 @@ static NSString * const				test_stopID    = @"2021";
 - (void)show_success:(ApiData *)data verb:(NSString *)verb {
 	NSString *text = nil;
 	
-	ApiTime *servertime = (ApiTime *)data;
-	text = [NSString stringWithFormat:@"%@ => %@", verb, [servertime time]];
+	NSUInteger index = [ServiceMBTA indexForVerb:verb];
+	switch (index) {
+		case e_verb_servertime: {
+			ApiTime *servertime = (ApiTime *)data;
+			text = [NSString stringWithFormat:@"%@ => %@", verb, [servertime time]];
+		}	break;
+		case e_verb_routes: {
+			ApiRoutes *routes = (ApiRoutes *)data;
+			text = [NSString stringWithFormat:@"%@ => %@", verb, [self routes_in_modes:routes.modes]];
+		}	break;
+		default:
+			break;
+	}
 	
 	if (text)
 		[self setResponse:text forVerb:verb];
@@ -176,6 +240,28 @@ static NSString * const				test_stopID    = @"2021";
 - (void)show_failure_verb:(NSString *)verb {
 	NSString *text = [NSString stringWithFormat:@"%@ request failed", verb];
 	[self setResponse:text forVerb:verb];
+}
+
+// ----------------------------------------------------------------------
+
+// returns string "<num> routes in <num> modes"
+- (NSString *)routes_in_modes:(NSArray *)modes {
+	NSUInteger num_routes = 0;
+	for (ApiRouteMode *mode in modes) {
+		num_routes += [mode.routes count];
+	}
+	NSString *result = [NSString stringWithFormat:@"%lu routes in %lu modes", (unsigned long)num_routes, (unsigned long)[modes count]];
+	return result;
+}
+
+// returns string "<num> routes in <num> modes"
+- (NSString *)stops_in_directions:(NSArray *)directions {
+	NSUInteger num_stops = 0;
+	for (ApiRouteDirection *direction in directions) {
+		num_stops += [direction.stops count];
+	}
+	NSString *result = [NSString stringWithFormat:@"%lu stops in %lu directions", (unsigned long)num_stops, (unsigned long)[directions count]];
+	return result;
 }
 
 // ----------------------------------------------------------------------

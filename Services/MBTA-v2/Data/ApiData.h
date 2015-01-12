@@ -8,7 +8,14 @@
 
 #import <Foundation/Foundation.h>
 
-@interface ApiData : NSObject
+#if CONFIG_USE_RZImport
+	#import "NSObject+RZImport.h"
+	#import "RZImportable.h"
+#endif
+
+// ----------------------------------------------------------------------
+
+@interface ApiData : NSObject			PROTOCOL_RZImportable
 
 + (void)get_item:(NSString *)verb
 		  params:(NSDictionary *)params
@@ -21,3 +28,5 @@
 		  failure:(void(^)(NSError *error))failure;
 
 @end
+
+// ----------------------------------------------------------------------

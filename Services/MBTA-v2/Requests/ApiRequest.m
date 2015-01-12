@@ -83,8 +83,8 @@
 // --------------------------------------------------
 
 - (void)success:(NSURLSessionDataTask *)task response:(id)responseObject {
-//	self.data = [ApiData dataForJson:responseObject key:[self key]];
-	self.data = [ApiData dataForJson:responseObject verb:self.verb params:self.params];
+//	self.data = [ApiData itemForJSON:responseObject key:[self key]];
+	self.data = [ApiData itemForJSON:responseObject verb:self.verb params:self.params];
 }
 
 - (void)failure:(NSURLSessionDataTask *)task error:(NSError *)error {

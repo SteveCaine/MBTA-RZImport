@@ -8,14 +8,35 @@
 
 #import "ApiData.h"
 
+#import "ApiRoutes.h"
+
 // --------------------------------------------------
 
 @interface ApiData ()
 
-//- (instancetype)initWithJSON:(NSDictionary *)json;
+- (instancetype)initWithJSON:(NSDictionary *)json;
 
 @end
 
 // --------------------------------------------------
-#pragma mark -
+#if CONFIG_USE_RZImport
+// --------------------------------------------------
+
+@interface ApiRouteDirections : ApiData
+@property (strong, nonatomic) NSArray *directions;
+@end
+
+// --------------------------------------------------
+#if 0
+@interface ApiRoute ()
+@property (strong, nonatomic) ApiRouteDirections *route_directions;
+- (void)setDirections:(NSArray *)directions;
+@end
+#endif
+// --------------------------------------------------
+#endif
+// --------------------------------------------------
+
+// --------------------------------------------------
+//#pragma mark -
 // --------------------------------------------------

@@ -14,6 +14,9 @@
 // ----------------------------------------------------------------------
 
 @interface ApiStop : ApiData
+//<RZImportable>
+//PROTOCOL_RZImportable
+
 @property (  copy, nonatomic) NSNumber *order;
 @property (  copy, nonatomic) NSString *ID;
 @property (  copy, nonatomic) NSString *name;
@@ -22,7 +25,9 @@
 // for stopsbylocation - stop's distance in miles
 // from location given in original request
 @property (  copy, nonatomic) NSNumber *distance;
+
 - (CLLocationCoordinate2D) location;
+
 @end
 
 // ----------------------------------------------------------------------
