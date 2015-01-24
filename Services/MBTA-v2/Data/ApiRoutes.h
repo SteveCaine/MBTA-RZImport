@@ -14,8 +14,8 @@
 
 typedef enum : NSUInteger {
 	mode_unknown,
-	mode_Subway,
-	mode_Rail,
+	mode_Subway, // there are two Subway modes: Green Line and everything else
+	mode_Rail,	 // so this enum is part of our logic to combine them
 	mode_Bus,
 	mode_Boat
 } RouteMode;
@@ -64,6 +64,10 @@ typedef enum : NSUInteger {
 + (void)get_success:(void(^)(ApiRoutes *data))success
 			failure:(void(^)(NSError *error))failure;
 - (ApiRoute *)routeByID:(NSString *)routeID;
+// CALC
+#if DEBUG_static_routes // for testing only
++ (ApiRoutes *)routes;
+#endif
 @end
 
 // ----------------------------------------------------------------------

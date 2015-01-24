@@ -8,6 +8,7 @@
 
 #import "ApiTime.h"
 
+#import "ApiData_private.h"
 #import "ServiceMBTA_strings.h"
 
 // ----------------------------------------------------------------------

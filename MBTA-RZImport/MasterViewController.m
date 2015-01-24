@@ -78,7 +78,6 @@ static NSString * const				test_stopID    = @"2021";
 		[self show_success:[request response] verb:verb_routes];
 	} failure:^(NSError *error) {
 		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
-		;
 		@strongify(self)
 		[self show_failure_verb:verb_routes];
 	}];
@@ -134,16 +133,16 @@ static NSString * const				test_stopID    = @"2021";
 	UITableViewCell *cell = [tableView dequeueReusableCellWithIdentifier:@"Cell" forIndexPath:indexPath];
 
 	NSString *text = [ServiceMBTA verbForIndex:indexPath.row];
-	
+/** /
 	switch (indexPath.row) {
 		case e_verb_servertime:
-			;
 			break;
 		case e_verb_routes:
 			break;
 		default:
 			break;
 	}
+/ **/
 	cell.textLabel.text = text;
 	cell.detailTextLabel.text = @"idle";
 
@@ -160,11 +159,6 @@ static NSString * const				test_stopID    = @"2021";
 	cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
 	return cell;
-}
-
-- (BOOL)tableView:(UITableView *)tableView canEditRowAtIndexPath:(NSIndexPath *)indexPath {
-	// Return NO if you do not want the specified item to be editable.
-	return NO;
 }
 
 // ----------------------------------------------------------------------

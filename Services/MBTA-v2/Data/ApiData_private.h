@@ -14,7 +14,24 @@
 
 @interface ApiData ()
 
+@property (copy, nonatomic) NSString *verb;
+
++ (void)get_item:(NSString *)verb
+		  params:(NSDictionary *)params
+		 success:(void(^)(ApiData *item))success
+		 failure:(void(^)(NSError *error))failure;
+
++ (void)get_array:(NSString *)verb
+		   params:(NSDictionary *)params
+		  success:(void(^)(NSArray *array))success
+		  failure:(void(^)(NSError *error))failure;
+
+- (void)update_success:(void(^)(ApiData *item))success
+			   failure:(void(^)(NSError *error))failure;
+
 - (instancetype)initWithJSON:(NSDictionary *)json;
+
+- (void)updateFromJSON:(NSDictionary *)json;
 
 @end
 

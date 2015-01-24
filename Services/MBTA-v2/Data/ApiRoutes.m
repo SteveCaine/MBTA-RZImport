@@ -165,11 +165,17 @@ NSString *name_for_mode(RouteMode mode) {
 // --------------------------------------------------
 #pragma mark -
 // --------------------------------------------------
+@interface ApiRouteMode ()
+//+ (ApiRouteMode *)mode_for_dict:(NSDictionary *)dict;
+- (BOOL)isOurData:(NSDictionary *)dict;
+@end
 
 @implementation ApiRouteMode
 
 #if CONFIG_USE_RZImport
+#if !CONFIG_USE_RZImport_update
 + (id)rzi_existingObjectForDict:(NSDictionary *)dict {
+//	ApiRoutes *sRoutes = [ApiRoutes routes];
 	if (sRoutes) {
 		NSString *str_route_type = [dict objectForKey:key_route_type];
 		NSString *mode_name = [dict objectForKey:key_mode_name];
@@ -187,6 +193,7 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return nil;
 }
+#endif
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"route_type" : @"type",
@@ -202,6 +209,24 @@ NSString *name_for_mode(RouteMode mode) {
 		return NO;
 	}
 	return YES;
+}
+// match route_type and mode_name values in dict against our own
+- (BOOL)isOurData:(NSDictionary *)dict {
+	BOOL result = NO;
+	if (dict) {
+		NSString *mode_name = [dict objectForKey:key_mode_name];
+		if ([mode_name length] && [mode_name isEqualToString:self.name]) {
+			NSString *str_route_type = [dict objectForKey:key_route_type];
+			if ([str_route_type length]) {
+				NSNumber *route_type = [NSNumber numberWithInteger:[str_route_type integerValue]];
+				if ([route_type compare:self.type] == NSOrderedSame) {
+					result = YES;
+				}
+			}
+		}
+	}
+	NSLog(@"%s %p returns %s", __FUNCTION__, dict, (result ? "YES" : "NO"));
+	return result;
 }
 #endif
 
@@ -240,6 +265,18 @@ NSString *name_for_mode(RouteMode mode) {
 
 @implementation ApiRoutes
 
+static ApiRoutes *sRoutes;
+
+#if DEBUG_static_routes // for testing only
++ (ApiRoutes *)routes {
+	return sRoutes;
+}
+#endif
+
++ (void)initialize {
+	NSLog(@"%s called.", __FUNCTION__);
+}
+
 + (void)get_success:(void(^)(ApiRoutes *data))success
 			failure:(void(^)(NSError *error))failure {
 	[ApiData get_item:verb_routes params:nil success:^(ApiData *item) {
@@ -252,6 +289,11 @@ NSString *name_for_mode(RouteMode mode) {
 		else
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
+}
+
+- (void)update_success:(void(^)(ApiData *item))success
+			   failure:(void(^)(NSError *error))failure {
+	
 }
 
 //static ApiRoutes *sRoutes;
@@ -280,9 +322,12 @@ NSString *name_for_mode(RouteMode mode) {
 	self = [super init];
 	if (self) {
 #if !DEBUG_disableNewCode
-		NSArray *modes = [json objectForKey:key_mode];
-		_modes = [ApiRouteMode rzi_objectsFromArray:modes];
-		
+		NSArray *a_modes = [json objectForKey:key_mode];
+		_modes = [ApiRouteMode rzi_objectsFromArray:a_modes];
+
+#if CONFIG_USE_RZImport_update
+		[self post_init];
+#else
 		_all_routes = [NSMutableArray array];
 		_routes_by_mode_name = [NSMutableDictionary dictionaryWithCapacity:num_strs_RouteMode-1];
 		
@@ -304,11 +349,60 @@ NSString *name_for_mode(RouteMode mode) {
 			
 		}
 #endif
+		
+#endif
 #if CONFIG_USE_RZImport
 		sRoutes = self;
 #endif
 	}
 	return self;
+}
+
+#if CONFIG_USE_RZImport_update
+- (void)updateFromJSON:(NSDictionary *)json {
+	NSArray *a_modes = [json objectForKey:key_mode];
+	NSMutableArray *updated_modes = [NSMutableArray arrayWithCapacity:[self.modes count]];
+	for (ApiRouteMode *mode in self.modes) {
+		for (NSDictionary *d_mode in a_modes) {
+			if ([mode isOurData:d_mode]) {
+				[mode rzi_importValuesFromDict:d_mode];
+				[updated_modes addObject:mode];
+				break;
+			}
+		}
+	}
+	self.modes = updated_modes; // any modes *not* in json are discarded
+	[self post_init];
+}
+#endif
+
+- (void)post_init {
+	if (_all_routes)
+		[_all_routes removeAllObjects];
+	else
+		_all_routes = [NSMutableArray array];
+	
+	if (_routes_by_mode_name)
+		[_routes_by_mode_name removeAllObjects];
+	else
+		_routes_by_mode_name = [NSMutableDictionary dictionary];
+	
+	for (ApiRouteMode *mode in _modes) {
+		// set the 'mode' enum on every route this mode contains
+		RouteMode route_mode = mode_for_name(mode.name);
+		for (ApiRoute *route in mode.routes)
+			route.mode = route_mode;
+		
+		[_all_routes addObjectsFromArray:mode.routes];
+		
+		// in the case of Subway, this combines routes from both subway modes (Green Line and everything else)
+		NSMutableArray *mode_routes = [_routes_by_mode_name objectForKey:mode.name];
+		if (mode_routes == nil) {
+			mode_routes = [NSMutableArray arrayWithArray:mode.routes];
+			[_routes_by_mode_name setObject:mode_routes forKey:mode.name];
+		}
+		[mode_routes addObjectsFromArray:mode.routes];
+	}
 }
 
 - (NSString *)description {
