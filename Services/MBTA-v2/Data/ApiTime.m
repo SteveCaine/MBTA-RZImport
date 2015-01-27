@@ -11,6 +11,8 @@
 #import "ApiData_private.h"
 #import "ServiceMBTA_strings.h"
 
+#import "Debug_iOS.h"
+
 // ----------------------------------------------------------------------
 
 @interface ApiTime ()
@@ -34,6 +36,8 @@
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
 }
+
+// no '-updateFromJSON:' because we never *update* a servertime object; it's always time-sensitive
 
 - (NSDate *)time {
 	NSDate *result = nil;

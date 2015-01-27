@@ -22,6 +22,9 @@
 		8E4BD74A1A61AB1300B51B0B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7291A61AB1300B51B0B /* UIKit.framework */; };
 		8E4BD7521A61AB1300B51B0B /* InfoPlist.strings in Resources */ = {isa = PBXBuildFile; fileRef = 8E4BD7501A61AB1300B51B0B /* InfoPlist.strings */; };
 		8E4BD7541A61AB1300B51B0B /* MBTA_RZImportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4BD7531A61AB1300B51B0B /* MBTA_RZImportTests.m */; };
+		8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E821A747B090074281A /* Debug_iOS.cpp */; };
+		8E9D5EC41A747B090074281A /* Debug_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E841A747B090074281A /* Debug_iOS.m */; };
+		8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E861A747B090074281A /* Debug_JSON.m */; };
 		8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8041A61C861007D37E7 /* ApiData.m */; };
 		8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8061A61C861007D37E7 /* ApiRoutes.m */; };
 		8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8081A61C861007D37E7 /* ApiStops.m */; };
@@ -29,11 +32,8 @@
 		8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE80D1A61C861007D37E7 /* ServiceMBTA.m */; };
 		8EBDE8161A61C861007D37E7 /* ServiceMBTA_strings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */; };
 		8EBDE81E1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE81D1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m */; };
-		8EE864F51A6303B5001D3871 /* ApiRoutesRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE864F41A6303B5001D3871 /* ApiRoutesRequest.m */; };
 		8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB291A61CD6500C55B5A /* RequestClient.m */; };
 		8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB2D1A61D7C000C55B5A /* EXTScope.m */; };
-		8EFBEB331A61DA3300C55B5A /* ApiRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB321A61DA3300C55B5A /* ApiRequest.m */; };
-		8EFBEB361A61DAD200C55B5A /* ApiTimeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */; };
 		8EFBEB3A1A61E3BC00C55B5A /* ApiData+RZImport.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB391A61E3BC00C55B5A /* ApiData+RZImport.m */; };
 		CD24D195C775130604AC385B /* libPods-MBTA-RZImport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */; };
 /* End PBXBuildFile section */
@@ -72,6 +72,13 @@
 		8E4BD74F1A61AB1300B51B0B /* MBTA-RZImportTests-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "MBTA-RZImportTests-Info.plist"; sourceTree = "<group>"; };
 		8E4BD7511A61AB1300B51B0B /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/InfoPlist.strings; sourceTree = "<group>"; };
 		8E4BD7531A61AB1300B51B0B /* MBTA_RZImportTests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = MBTA_RZImportTests.m; sourceTree = "<group>"; };
+		8E9D5E821A747B090074281A /* Debug_iOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug_iOS.cpp; sourceTree = "<group>"; };
+		8E9D5E831A747B090074281A /* Debug_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug_iOS.h; sourceTree = "<group>"; };
+		8E9D5E841A747B090074281A /* Debug_iOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug_iOS.m; sourceTree = "<group>"; };
+		8E9D5E851A747B090074281A /* Debug_JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug_JSON.h; sourceTree = "<group>"; };
+		8E9D5E861A747B090074281A /* Debug_JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug_JSON.m; sourceTree = "<group>"; };
+		8E9D5EBF1A747B090074281A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
+		8E9D5EC01A747B090074281A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8EBDE8031A61C861007D37E7 /* ApiData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData.h; sourceTree = "<group>"; };
 		8EBDE8041A61C861007D37E7 /* ApiData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiData.m; sourceTree = "<group>"; };
 		8EBDE8051A61C861007D37E7 /* ApiRoutes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiRoutes.h; sourceTree = "<group>"; };
@@ -142,6 +149,7 @@
 		8E4BD7191A61AB1300B51B0B = {
 			isa = PBXGroup;
 			children = (
+				8E9D5E7E1A747B090074281A /* DebugUtil */,
 				8EBDE8001A61C861007D37E7 /* Services */,
 				8EFBEB2B1A61D7C000C55B5A /* xtras */,
 				8E4BD72B1A61AB1300B51B0B /* MBTA-RZImport */,
@@ -216,6 +224,20 @@
 				8E4BD7501A61AB1300B51B0B /* InfoPlist.strings */,
 			);
 			name = "Supporting Files";
+			sourceTree = "<group>";
+		};
+		8E9D5E7E1A747B090074281A /* DebugUtil */ = {
+			isa = PBXGroup;
+			children = (
+				8E9D5E821A747B090074281A /* Debug_iOS.cpp */,
+				8E9D5E831A747B090074281A /* Debug_iOS.h */,
+				8E9D5E841A747B090074281A /* Debug_iOS.m */,
+				8E9D5E851A747B090074281A /* Debug_JSON.h */,
+				8E9D5E861A747B090074281A /* Debug_JSON.m */,
+				8E9D5EBF1A747B090074281A /* LICENSE */,
+				8E9D5EC01A747B090074281A /* README.md */,
+			);
+			path = DebugUtil;
 			sourceTree = "<group>";
 		};
 		8EBDE8001A61C861007D37E7 /* Services */ = {
@@ -436,12 +458,13 @@
 			buildActionMask = 2147483647;
 			files = (
 				8EBDE8161A61C861007D37E7 /* ServiceMBTA_strings.m in Sources */,
-				8EFBEB361A61DAD200C55B5A /* ApiTimeRequest.m in Sources */,
 				8E4BD7361A61AB1300B51B0B /* AppDelegate.m in Sources */,
 				8EFBEB3A1A61E3BC00C55B5A /* ApiData+RZImport.m in Sources */,
+				8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */,
 				8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */,
 				8E4BD73C1A61AB1300B51B0B /* MasterViewController.m in Sources */,
 				8E4BD7321A61AB1300B51B0B /* main.m in Sources */,
+				8E9D5EC41A747B090074281A /* Debug_iOS.m in Sources */,
 				8E4BD73F1A61AB1300B51B0B /* DetailViewController.m in Sources */,
 				8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */,
 				8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */,
@@ -449,9 +472,8 @@
 				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
 				8EBDE81E1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m in Sources */,
 				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
-				8EE864F51A6303B5001D3871 /* ApiRoutesRequest.m in Sources */,
-				8EFBEB331A61DA3300C55B5A /* ApiRequest.m in Sources */,
 				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
+				8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

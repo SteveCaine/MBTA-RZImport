@@ -8,6 +8,7 @@
 
 #import <Foundation/Foundation.h>
 
+#warning TODO - do away with Request class hierarchy in this branch!
 // ----------------------------------------------------------------------
 @class ApiData;
 

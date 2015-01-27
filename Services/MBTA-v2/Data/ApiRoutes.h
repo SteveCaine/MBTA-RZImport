@@ -9,6 +9,7 @@
 #import <Foundation/Foundation.h>
 
 #import "ApiData.h"
+#import "ApiStops.h"
 
 // ----------------------------------------------------------------------
 
@@ -35,17 +36,17 @@ typedef enum : NSUInteger {
 // ----------------------------------------------------------------------
 
 @interface ApiRoute : ApiData
+
 @property (  copy, nonatomic) NSString	*ID;
 @property (  copy, nonatomic) NSString	*name;
 @property (  copy, nonatomic) NSString	*noUI; // BOOL
 @property (assign, nonatomic) RouteMode	mode;
-#if 1 //!CONFIG_USE_RZImport
-	@property (strong, nonatomic) NSArray  *directions;
-#else
-	- (NSArray *)directions;
-#endif
+@property (strong, nonatomic) NSArray  *directions;
+
 - (void)addStops_success:(void(^)(ApiRoute *route))success
 				 failure:(void(^)(NSError *error))failure;
+- (void)updateStops_success:(void(^)(ApiRoute *route))success
+					failure:(void(^)(NSError *error))failure;
 @end
 
 // ----------------------------------------------------------------------
@@ -61,10 +62,14 @@ typedef enum : NSUInteger {
 @interface ApiRoutes : ApiData
 // RZ
 @property (strong, nonatomic) NSArray *modes;
+
 + (void)get_success:(void(^)(ApiRoutes *data))success
 			failure:(void(^)(NSError *error))failure;
-- (ApiRoute *)routeByID:(NSString *)routeID;
+
+- (void)update_success:(void(^)(ApiRoutes *routes))success
+			   failure:(void(^)(NSError *error))failure;
 // CALC
+- (ApiRoute *)routeByID:(NSString *)routeID;
 #if DEBUG_static_routes // for testing only
 + (ApiRoutes *)routes;
 #endif
@@ -76,9 +81,11 @@ typedef enum : NSUInteger {
 @property (  copy, nonatomic) NSString *stopID;
 @property (  copy, nonatomic) NSString *stopName;
 @property (strong, nonatomic) NSArray  *modes;
-+ (void)get4stopID:(NSString *)stopID
++ (void)get4stop:(NSString *)stopID
 		  success:(void(^)(ApiRoutesByStop *data))success
 		  failure:(void(^)(NSError *error))failure;
+- (void)update_success:(void(^)(ApiRoutesByStop *item))success
+			   failure:(void(^)(NSError *error))failure;
 @end
 
 // ----------------------------------------------------------------------

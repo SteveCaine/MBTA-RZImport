@@ -9,8 +9,11 @@
 #import "ApiStops.h"
 
 #import "ApiData_private.h"
+
 #import "ApiRoutes.h"
 #import "ServiceMBTA_strings.h"
+
+#import "Debug_iOS.h"
 
 // ----------------------------------------------------------------------
 
@@ -24,8 +27,13 @@
 #if CONFIG_USE_RZImport
 + (NSDictionary *)rzi_customMappings {
 	return @{
-			 @"stop_id"   : @"ID",
-			 @"stop_name" : @"name",
+			 @"stop_id"				: @"ID",
+			 @"stop_name"			: @"name",
+			 @"parent_station"		: @"station",
+			 @"parent_station_name"	: @"station_name",
+			 @"stop_lat"			: @"latitude",
+			 @"stop_lon"			: @"longitude",
+			 @"stop_order"			: @"order"
 			 };
 }
 #endif
@@ -44,7 +52,16 @@
 	BOOL numericID = ([self.ID integerValue] != 0);
 	NSString *strID = (numericID ? [NSString stringWithFormat:@"#%@", self.ID] : [NSString stringWithFormat:@"'%@'",self.ID]);
 	
-	[result appendFormat:@"Stop %@ ('%@') is at %f, %f (lat,lon)", strID, self.name, self.location.latitude, self.location.longitude];
+	if (self.order)
+		[result appendFormat:@"%2i: ", (int)[self.order integerValue]];
+	
+	[result appendFormat:@"Stop %@ ('%@')", strID, self.name];
+	
+	if ([self.distance floatValue] > 0.0)
+		[result appendFormat:@" is %f miles away", [self.distance floatValue]];
+	
+	[result appendFormat:@" at %f, %f (lat,lon)", self.location.latitude, self.location.longitude];
+	
 	return result;
 }
 @end
@@ -60,9 +77,9 @@
 	NSDictionary *params = @{ param_route : routeID };
 	
 	[ApiData get_item:verb_stopsbyroute params:params success:^(ApiData *item) {
+		ApiStopsByRoute *stopsbyroute = (ApiStopsByRoute *)item;
+		stopsbyroute.routeID = routeID;
 		if (success) {
-			ApiStopsByRoute *stopsbyroute = (ApiStopsByRoute *)item;
-			stopsbyroute.routeID = routeID;
 			success(stopsbyroute);
 		}
 	} failure:^(NSError *error) {
@@ -71,6 +88,33 @@
 		else
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
+}
+- (void)update_success:(void(^)(ApiStopsByRoute *stops))success
+			   failure:(void(^)(NSError *error))failure {
+#warning TO TEST
+	[super internal_update_success:^(ApiData *item) {
+		NSAssert(item == self, @"Update failed to return original item.");
+		if (success)
+			success(self);
+	} failure:^(NSError *error) {
+		if (failure)
+			failure(error);
+		else
+			NSLog(@"%s failed: %@", __FUNCTION__, [error localizedDescription]);
+	}];
+}
+
+- (instancetype)initWithJSON:(NSDictionary *)json {
+	self = [super init];
+	if (self) {
+		[self updateFromJSON:json];
+	}
+	return self;
+}
+
+- (void)updateFromJSON:(NSDictionary *)json {
+	NSArray *a_directions = [json objectForKey:key_direction];
+	self.directions = [ApiRouteDirection updateDirections:self.directions withDirections:a_directions];
 }
 
 - (NSString *)description {
@@ -101,6 +145,7 @@
 	[ApiData get_item:verb_stopsbylocation params:params success:^(ApiData *item) {
 		if (success) {
 			ApiStopsByLocation *stopsbylocation = (ApiStopsByLocation *)item;
+			stopsbylocation.location = location;
 			success(stopsbylocation);
 		}
 	} failure:^(NSError *error) {
@@ -110,9 +155,65 @@
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
 }
+- (void)update_success:(void(^)(ApiStopsByLocation *stops))success
+			   failure:(void(^)(NSError *error))failure {
+#warning TODO
+	[super internal_update_success:^(ApiData *item) {
+		NSAssert(item == self, @"Update failed to return original item.");
+		if (success)
+			success(self);
+	} failure:^(NSError *error) {
+		if (failure)
+			failure(error);
+		else
+			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+	}];
+}
+
+- (instancetype)initWithJSON:(NSDictionary *)json {
+	self = [super init];
+	if (self) {
+		[self updateFromJSON:json];
+	}
+	return self;
+}
+
+- (void)updateFromJSON:(NSDictionary *)json {
+	NSArray *a_stops = [json objectForKey:key_stop];
+#warning TODO - move this into a +mergeStops:withStops: method?
+	if ([self.stops count] == 0) { // no existing stops (creating new stopsbylocation object)
+		self.stops = [ApiStop rzi_objectsFromArray:a_stops];
+	}
+	else { // yes existing stops (updating existing stopsbylocation object)
+		NSMutableArray *new_stops = [NSMutableArray array];
+		NSMutableArray *updated_stops = [NSMutableArray array];
+		
+		for (NSDictionary *d_stop in a_stops) {
+			BOOL updated = NO;
+			for (ApiStop *cur_stop in self.stops) {
+				NSString *stop_id = [d_stop objectForKey:key_stop_id];
+				if ([stop_id isEqualToString:cur_stop.ID]) {
+					[cur_stop rzi_importValuesFromDict:d_stop];
+					[updated_stops addObject:cur_stop];
+					updated = YES;
+					break;
+				}
+			}
+			if (!updated) {
+				ApiStop *new_stop = [ApiStop rzi_objectFromDictionary:d_stop];
+				[new_stops addObject:new_stop];
+			}
+		}
+		// stops *not* in json are discarded (from existing ApiStopsByLocation object)
+		self.stops = [NSArray arrayWithArray:updated_stops];
+		// new stops in json are added (*all* if this is new ApiStopsByLocation object)
+		self.stops = [self.stops arrayByAddingObjectsFromArray:new_stops];
+	}
+}
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
+	[result appendFormat:@" at %f, %f (lat,lon)", self.location.latitude, self.location.longitude];
 	if ([self.stops count]) {
 		int index = 0;
 		for (ApiStop *stop in self.stops) {

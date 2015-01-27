@@ -14,6 +14,8 @@
 
 #import "RequestClient.h"
 
+#import "Debug_iOS.h"
+
 // ----------------------------------------------------------------------
 
 //@interface ApiRequest ()
@@ -62,7 +64,7 @@
 	RequestClient *client = [RequestClient sharedClient];
 	NSString *url = [client request:self.verb
 							 params:self.params
-							 format:0
+							 format:jsonFormat
 							success:^(NSURLSessionDataTask *task, id responseObject) {
 								[self success:task response:responseObject];
 								if (success)
@@ -76,9 +78,9 @@
 								else
 									NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 							}];
-	NSLog(@" request URL = '%@'", url);
+	MyLog(@" request URL = '%@'", url);
 #else
-	NSError *error = [ApiData error_incomplete_implementation];
+	NSError *error = [ApiData error_missing_implementation];
 	if (failure)
 		failure(error);
 	else

@@ -14,10 +14,9 @@
 // ----------------------------------------------------------------------
 
 @interface ApiStop : ApiData
-//<RZImportable>
-//PROTOCOL_RZImportable
 
 @property (  copy, nonatomic) NSNumber *order;
+@property (  copy, nonatomic) NSNumber *sequence;
 @property (  copy, nonatomic) NSString *ID;
 @property (  copy, nonatomic) NSString *name;
 @property (  copy, nonatomic) NSString *station;
@@ -26,7 +25,8 @@
 // from location given in original request
 @property (  copy, nonatomic) NSNumber *distance;
 
-- (CLLocationCoordinate2D) location;
+@property (assign, nonatomic, readonly) CLLocationCoordinate2D location;
+//- (CLLocationCoordinate2D) location;
 
 @end
 
@@ -38,18 +38,23 @@
 @property (strong, nonatomic) NSArray *directions;
 
 + (void)get4route:(NSString *)routeID
-		  success:(void(^)(ApiStopsByRoute *data))success
+		  success:(void(^)(ApiStopsByRoute *stops))success
 		  failure:(void(^)(NSError *error))failure;
+- (void)update_success:(void(^)(ApiStopsByRoute *stops))success
+			   failure:(void(^)(NSError *error))failure;
 @end
 
 // ----------------------------------------------------------------------
 
 @interface ApiStopsByLocation : ApiData
+@property (assign, nonatomic) CLLocationCoordinate2D location; // from request
 @property (strong, nonatomic) NSArray *stops;
 
 + (void)get4location:(CLLocationCoordinate2D)location
-			 success:(void(^)(ApiStopsByLocation *data))success
+			 success:(void(^)(ApiStopsByLocation *stops))success
 			 failure:(void(^)(NSError *error))failure;
+- (void)update_success:(void(^)(ApiStopsByLocation *stops))success
+			   failure:(void(^)(NSError *error))failure;
 @end
 
 // ----------------------------------------------------------------------

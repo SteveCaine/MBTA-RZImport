@@ -16,6 +16,8 @@
 //#import "NSObject+RZImport.h"
 //#import "RZImportable.h"
 
+#import "Debug_iOS.h"
+
 #if CONFIG_USE_RZImport
 static ApiRoutes *sRoutes;
 #endif
@@ -81,6 +83,44 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
+// compares 'old_directions' (objects) with 'new_directions' (deserialized JSONs),
+// updating those that match (-isOurData:) and replacing those that don't
++ (NSArray *)updateDirections:(NSArray *)cur_directions withDirections:(NSArray *)a_directions {
+	NSArray *result = nil;
+	
+	if ([cur_directions count] == 0) { // no existing directions (creating new parent object)
+		result = [ApiRouteDirection rzi_objectsFromArray:a_directions];
+	}
+	else { // yes existing directions (updating existing parent object)
+		NSMutableArray     *new_directions = [NSMutableArray array];
+		NSMutableArray *updated_directions = [NSMutableArray array];
+		
+		for (NSDictionary *d_direction in a_directions) {
+			BOOL updated = NO;
+			for (ApiRouteDirection *cur_direction in cur_directions) {
+				
+				// equivalent to '-isOurData:' in class RouteMode
+				NSString *direction_id = [d_direction objectForKey:key_direction_id];
+				if (direction_id && ([direction_id integerValue] == [cur_direction.ID integerValue])) {
+					
+					[cur_direction rzi_importValuesFromDict:d_direction];
+					[updated_directions addObject:cur_direction];
+					updated = YES;
+					break;
+				}
+			}
+			if (!updated) {
+				ApiRouteDirection *new_direction = [ApiRouteDirection rzi_objectFromDictionary:d_direction];
+				[new_directions addObject:new_direction];
+			}
+		}
+		// directions *not* in json are discarded (from existing ApiRoutes object)
+		result = [NSArray arrayWithArray:updated_directions];
+		// new directions in json are added (*all* if this is new ApiRoutes object)
+		result = [result arrayByAddingObjectsFromArray:new_directions];
+	}
+	return result;
+}
 #endif
 
 - (NSString *)description {
@@ -101,6 +141,10 @@ NSString *name_for_mode(RouteMode mode) {
 // --------------------------------------------------
 #pragma mark -
 // --------------------------------------------------
+
+@interface ApiRoute ()
+@property (strong, nonatomic) ApiStopsByRoute *stopsbyroute;
+@end
 
 @implementation ApiRoute
 
@@ -125,10 +169,10 @@ NSString *name_for_mode(RouteMode mode) {
 				 failure:(void(^)(NSError *error))failure {
 	NSDictionary *params = @{ param_route : self.ID };
 	
-	[ApiData get_array:verb_stopsbyroute params:params success:^(NSArray *array) {
+	[ApiData get_item:verb_stopsbyroute params:params success:^(ApiData *data) {
+		self.stopsbyroute = (ApiStopsByRoute *)data;
+		self.directions = self.stopsbyroute.directions;
 		if (success) {
-			// TODO: validate that returned items ARE ApiRouteDirections
-			self.directions = array;
 			success(self);
 		}
 	} failure:^(NSError *error) {
@@ -136,13 +180,18 @@ NSString *name_for_mode(RouteMode mode) {
 	}];
 }
 
-#if 0 //CONFIG_USE_RZImport
-- (NSArray *)directions {
-	return nil;
+- (void)updateStops_success:(void(^)(ApiRoute *route))success
+					failure:(void(^)(NSError *error))failure {
+	[self.stopsbyroute update_success:^(ApiStopsByRoute *stops) {
+		NSAssert(stops == self.stopsbyroute, @"Update failed to return original item.");
+		self.directions = self.stopsbyroute.directions;
+		if (success) {
+			success(self);
+		}
+	} failure:^(NSError *error) {
+		NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+	}];
 }
-- (void)setDirections:(NSArray *)directions {
-}
-#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -166,34 +215,12 @@ NSString *name_for_mode(RouteMode mode) {
 #pragma mark -
 // --------------------------------------------------
 @interface ApiRouteMode ()
-//+ (ApiRouteMode *)mode_for_dict:(NSDictionary *)dict;
 - (BOOL)isOurData:(NSDictionary *)dict;
 @end
 
 @implementation ApiRouteMode
 
 #if CONFIG_USE_RZImport
-#if !CONFIG_USE_RZImport_update
-+ (id)rzi_existingObjectForDict:(NSDictionary *)dict {
-//	ApiRoutes *sRoutes = [ApiRoutes routes];
-	if (sRoutes) {
-		NSString *str_route_type = [dict objectForKey:key_route_type];
-		NSString *mode_name = [dict objectForKey:key_mode_name];
-		
-		if ([str_route_type length] && [mode_name length]) {
-			NSNumber *route_type = [NSNumber numberWithInteger:[str_route_type integerValue]];
-			for (ApiRouteMode *mode in sRoutes.modes) {
-				if ([route_type compare:mode.type] == NSOrderedSame) {
-					if ([mode_name compare:mode.name] == NSOrderedSame) {
-						return mode;
-					}
-				}
-			}
-		}
-	}
-	return nil;
-}
-#endif
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"route_type" : @"type",
@@ -210,6 +237,40 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
+// compares 'old_modes' (objects) with 'new_modes' (deserialized JSONs),
+// updating those that match (-isOurData:) and replacing those that don't
++ (NSArray *)updateModes:(NSArray *)cur_modes withModes:(NSArray *)a_modes {
+	NSArray *result = nil;
+	if ([cur_modes count] == 0) { // no existing modes (creating new routes object)
+		result = [ApiRouteMode rzi_objectsFromArray:a_modes];
+	}
+	else { // yes existing modes (updating existing routes object)
+		NSMutableArray     *new_modes = [NSMutableArray array];
+		NSMutableArray *updated_modes = [NSMutableArray array];
+		
+		for (NSDictionary *d_mode in a_modes) {
+			BOOL updated = NO;
+			for (ApiRouteMode *cur_mode in cur_modes) {
+				if ([cur_mode isOurData:d_mode]) {
+					[cur_mode rzi_importValuesFromDict:d_mode];
+					[updated_modes addObject:cur_mode];
+					updated = YES;
+					break;
+				}
+			}
+			if (!updated) {
+				ApiRouteMode *new_mode = [ApiRouteMode rzi_objectFromDictionary:d_mode];
+				[new_modes addObject:new_mode];
+			}
+		}
+		// modes *not* in json are discarded (from existing ApiRoutes object)
+		result = [NSArray arrayWithArray:updated_modes];
+		// new modes in json are added (*all* if this is new ApiRoutes object)
+		result = [result arrayByAddingObjectsFromArray:new_modes];
+	}
+	return result;
+}
+#endif
 // match route_type and mode_name values in dict against our own
 - (BOOL)isOurData:(NSDictionary *)dict {
 	BOOL result = NO;
@@ -225,10 +286,9 @@ NSString *name_for_mode(RouteMode mode) {
 			}
 		}
 	}
-	NSLog(@"%s %p returns %s", __FUNCTION__, dict, (result ? "YES" : "NO"));
+	MyLog(@"%s %p returns %s", __FUNCTION__, dict, (result ? "YES" : "NO"));
 	return result;
 }
-#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -274,7 +334,7 @@ static ApiRoutes *sRoutes;
 #endif
 
 + (void)initialize {
-	NSLog(@"%s called.", __FUNCTION__);
+	MyLog(@"%s called.", __FUNCTION__);
 }
 
 + (void)get_success:(void(^)(ApiRoutes *data))success
@@ -291,9 +351,19 @@ static ApiRoutes *sRoutes;
 	}];
 }
 
-- (void)update_success:(void(^)(ApiData *item))success
+- (void)update_success:(void(^)(ApiRoutes *routes))success
 			   failure:(void(^)(NSError *error))failure {
-	
+	[super internal_update_success:^(ApiData *item) {
+		// -super- should catch this and call our 'failure' block
+		NSAssert(item == self, @"Update failed to return original item.");
+		if (success)
+			success((ApiRoutes *)item);
+	} failure:^(NSError *error) {
+		if (failure)
+			failure(error);
+		else
+			NSLog(@"%s failed: %@", __FUNCTION__, [error localizedDescription]);
+	}];
 }
 
 //static ApiRoutes *sRoutes;
@@ -321,62 +391,46 @@ static ApiRoutes *sRoutes;
 - (instancetype)initWithJSON:(NSDictionary *)json {
 	self = [super init];
 	if (self) {
-#if !DEBUG_disableNewCode
-		NSArray *a_modes = [json objectForKey:key_mode];
-		_modes = [ApiRouteMode rzi_objectsFromArray:a_modes];
-
-#if CONFIG_USE_RZImport_update
-		[self post_init];
-#else
-		_all_routes = [NSMutableArray array];
-		_routes_by_mode_name = [NSMutableDictionary dictionaryWithCapacity:num_strs_RouteMode-1];
-		
-		for (ApiRouteMode *mode in _modes) {
-			// set the 'mode' enum on every route this mode contains
-			RouteMode route_mode = mode_for_name(mode.name);
-			for (ApiRoute *route in mode.routes)
-				route.mode = route_mode;
-			
-			[_all_routes addObjectsFromArray:mode.routes];
-			
-			// in the case of Subway, this combines routes from both subway modes
-			NSMutableArray *mode_routes = [_routes_by_mode_name objectForKey:mode.name];
-			if (mode_routes == nil) {
-				mode_routes = [NSMutableArray arrayWithArray:mode.routes];
-				[_routes_by_mode_name setObject:mode_routes forKey:mode.name];
-			}
-			[mode_routes addObjectsFromArray:mode.routes];
-			
-		}
-#endif
-		
-#endif
-#if CONFIG_USE_RZImport
-		sRoutes = self;
-#endif
+		// nothing else to do here, so just call update
+		[self updateFromJSON:json];
 	}
 	return self;
 }
 
-#if CONFIG_USE_RZImport_update
 - (void)updateFromJSON:(NSDictionary *)json {
 	NSArray *a_modes = [json objectForKey:key_mode];
-	NSMutableArray *updated_modes = [NSMutableArray arrayWithCapacity:[self.modes count]];
-	for (ApiRouteMode *mode in self.modes) {
+#if 1
+	self.modes = [ApiRouteMode updateModes:self.modes withModes:a_modes];
+#else
+	
+	if ([self.modes count] == 0) { // no existing modes (creating new routes object)
+		self.modes = [ApiRouteMode rzi_objectsFromArray:a_modes];
+	}
+	else { // yes existing modes (updating existing routes object)
+		NSMutableArray     *new_modes = [NSMutableArray array];
+		NSMutableArray *updated_modes = [NSMutableArray array];
+		
 		for (NSDictionary *d_mode in a_modes) {
-			if ([mode isOurData:d_mode]) {
-				[mode rzi_importValuesFromDict:d_mode];
-				[updated_modes addObject:mode];
-				break;
+			BOOL updated = NO;
+			for (ApiRouteMode *cur_mode in self.modes) {
+				if ([cur_mode isOurData:d_mode]) {
+					[cur_mode rzi_importValuesFromDict:d_mode];
+					[updated_modes addObject:cur_mode];
+					updated = YES;
+					break;
+				}
+			}
+			if (!updated) {
+				ApiRouteMode *new_mode = [ApiRouteMode rzi_objectFromDictionary:d_mode];
+				[new_modes addObject:new_mode];
 			}
 		}
+		// modes *not* in json are discarded (from existing ApiRoutes object)
+		self.modes = [NSArray arrayWithArray:updated_modes];
+		// new modes in json are added (*all* if this is new ApiRoutes object)
+		self.modes = [self.modes arrayByAddingObjectsFromArray:new_modes];
 	}
-	self.modes = updated_modes; // any modes *not* in json are discarded
-	[self post_init];
-}
 #endif
-
-- (void)post_init {
 	if (_all_routes)
 		[_all_routes removeAllObjects];
 	else
@@ -424,7 +478,7 @@ static ApiRoutes *sRoutes;
 
 @implementation ApiRoutesByStop
 
-+ (void)get4stopID:(NSString *)stopID
++ (void)get4stop:(NSString *)stopID
 		   success:(void(^)(ApiRoutesByStop *data))success
 		   failure:(void(^)(NSError *error))failure {
 	NSDictionary *params = @{ param_stop : stopID };
@@ -439,6 +493,40 @@ static ApiRoutes *sRoutes;
 		else
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
+}
+- (void)update_success:(void(^)(ApiRoutesByStop *item))success
+			   failure:(void(^)(NSError *error))failure {
+#warning TODO
+	[super internal_update_success:^(ApiData *item) {
+		NSAssert(item == self, @"Update failed to return original item.");
+		if (success)
+			success(self);
+	} failure:^(NSError *error) {
+		if (failure)
+			failure(error);
+		else
+			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+	}];
+}
+
+#if CONFIG_USE_RZImport
+- (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
+	if ([key isEqualToString:key_mode]) {
+		self.modes = [ApiRouteMode rzi_objectsFromArray:value];
+		return NO;
+	}
+	return YES;
+}
+#endif
+
+// NO '-initWithJSON:' as we call '+rzi_objectFromDictionary' directly
+
+- (void)updateFromJSON:(NSDictionary *)json {
+	self.stopID = [json objectForKey:key_stop_id];
+	self.stopName = [json objectForKey:key_stop_name];
+	
+	NSArray *a_modes = [json objectForKey:key_mode];
+	self.modes = [ApiRouteMode updateModes:self.modes withModes:a_modes];
 }
 
 - (NSString *)description {
