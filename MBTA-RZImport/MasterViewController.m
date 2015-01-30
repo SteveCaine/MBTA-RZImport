@@ -207,7 +207,7 @@ static ApiStopsByLocation	*sStopsByLocation;
 		@weakify(self)
 		[sStopsByRoute update_success:^(ApiStopsByRoute *stops) {
 			NSAssert(stops == sStopsByRoute, @"Update failed to return original item.");
-			MyLog(@"\n\n%s stopsbyroute = %@\n\n", __FUNCTION__, stops);
+			MyLog(@"\n\n%s stops = %@\n\n", __FUNCTION__, stops);
 			@strongify(self)
 			[self show_success:stops verb:verb_stopsbyroute];
 		} failure:^(NSError *error) {
@@ -291,7 +291,7 @@ static ApiStopsByLocation	*sStopsByLocation;
 // ----------------------------------------------------------------------
 #pragma mark - UITableViewDataSource
 // ----------------------------------------------------------------------
-
+#warning TODO - make this 2-section table? top section does 'request', bottom section does 'get' and 'update'?
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
 	return 1;
 }

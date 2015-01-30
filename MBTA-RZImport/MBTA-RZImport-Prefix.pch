@@ -26,20 +26,12 @@ typedef struct { CLLocationDegrees latitude; CLLocationDegrees longitude; } CLLo
 // CONFIG FLAGS
 // ----------------------------------------------------------------------
 
-#define CONFIG_USE_RZImport	1
-#define CONFIG_USE_RestKit	!CONFIG_USE_RZImport
+#define CONFIG_useJSON				1
+#define CONFIG_useXML				!CONFIG_useJSON
 
-#if CONFIG_USE_RZImport
-	#define PROTOCOL_RZImportable <RZImportable>
-#else
-	#define PROTOCOL_RZImportable
-#endif
-
-#if CONFIG_USE_RZImport
-	// update existing ApiRoutes object
-	// instead of creating new ApiStopsByRoute object
-	#define CONFIG_stops_update_route	0
-#endif
+// update existing ApiRoutes object
+// instead of creating new ApiStopsByRoute object
+#define CONFIG_stops_update_route	0
 
 // ----------------------------------------------------------------------
 // DEBUG FLAGS
@@ -47,12 +39,16 @@ typedef struct { CLLocationDegrees latitude; CLLocationDegrees longitude; } CLLo
 
 #ifdef DEBUG
 
-// for testing, provide class method +[ApiRoutes routes] to return
-// result of last 'verb_routes' request
-//#define DEBUG_static_routes		 1
+#define DEBUG_logHeadersHTTP		0
 
-#if CONFIG_USE_RZImport
-	#define DEBUG_disableNewCode 0
-#endif
+// this compile-time needs flag to be in the 'Pods' Xcode project, specifically in file
+//		./Pods/AFNetworking/Support Files/Pods-AFNetworking-prefix.pch
+// the added code it controls is in
+//		./Pods/AFNetworking/NSURLSession/AFURLResponseSerialization.m
+// in method '-URLSession:task:didCompleteWithError:'
+//
+//#ifdef DEBUG
+//#define DEBUG_logRawResponse		1
+//#endif
 
 #endif

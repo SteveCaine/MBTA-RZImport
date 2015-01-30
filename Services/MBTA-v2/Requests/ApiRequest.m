@@ -60,7 +60,7 @@
 
 - (void)get_success:(void(^)(ApiRequest *request))success
 			failure:(void(^)(NSError *error))failure {
-#if CONFIG_USE_RZImport
+	
 	RequestClient *client = [RequestClient sharedClient];
 	NSString *url = [client request:self.verb
 							 params:self.params
@@ -79,13 +79,6 @@
 									NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 							}];
 	MyLog(@" request URL = '%@'", url);
-#else
-	NSError *error = [ApiData error_missing_implementation];
-	if (failure)
-		failure(error);
-	else
-		NSLog(@"Error: %@", [error localizedDescription]);
-#endif
 }
 
 // --------------------------------------------------

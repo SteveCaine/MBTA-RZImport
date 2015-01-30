@@ -1,8 +1,9 @@
 //
 //  ServiceMBTA.h
-//  MBTA-APIs
+//  MBTA-RZImport
 //
-//	Partial implementation of MBTA v2 API to demonstrate use of RestKit
+//	Partial implementation of MBTA v2 API to demonstrate
+//	the use of RZImport from RaizLabs (https://github.com/Raizlabs/RZImport)
 //
 //	Supports these five calls:
 //	http://realtime.mbta.com/developer/api/v2/servertime?api_key=<myKey>&format=[json/xml]
@@ -16,10 +17,6 @@
 //
 
 #import <Foundation/Foundation.h>
-
-// ----------------------------------------------------------------------
-//extern NSString * const str_BaseURL;
-//extern NSString * const str_key_API;
 
 // ----------------------------------------------------------------------
 @interface ServiceMBTA : NSObject

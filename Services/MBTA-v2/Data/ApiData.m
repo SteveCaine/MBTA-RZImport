@@ -1,6 +1,6 @@
 //
 //  ApiData.m
-//  MBTA-APIs
+//  MBTA-RZImport
 //
 //  Created by Steve Caine on 12/31/14.
 //  Copyright (c) 2014 Steve Caine. All rights reserved.
@@ -31,7 +31,7 @@
 	[ApiData request:verb params:params item:nil success:^(ApiData *data) {
 		if ([data isKindOfClass:[ApiData class]]) {
 			data.verb = verb;
-			data.params = [params copy];
+			data.params = params; // 'copy' property
 			if (success)
 				success(data);
 		}
@@ -68,56 +68,20 @@
 - (instancetype)initWithJSON:(NSDictionary *)json {
 	self = [super init];
 	if (self) {
-		NSString *msg = [NSString stringWithFormat:@"ApiData subclass '%@' should handle %s and just call '-init' on its superclass.", NSStringFromClass([self class]), __FUNCTION__];
+		NSString *msg = [NSString stringWithFormat:
+						 @"ApiData subclass '%@' should handle %s and just call '-init' on its superclass.",
+						 NSStringFromClass([self class]), __FUNCTION__];
 		NSAssert(false, msg);
 	}
 	return self;
 }
 
 - (void)updateFromJSON:(NSDictionary *)json {
-	NSString *msg = [NSString stringWithFormat:@"%s called on ApiData subclass (%@) that does not implement it.", __FUNCTION__, NSStringFromClass([self class])];
+	NSString *msg = [NSString stringWithFormat:
+					 @"%s called on ApiData subclass (%@) that does not implement it.",
+					 __FUNCTION__, NSStringFromClass([self class])];
 	NSAssert(false, msg);
 }
-
-// ----------------------------------------------------------------------
-#if CONFIG_USE_RestKit
-/*
-+ (void)get_array:(NSString *)verb
-		   params:(NSDictionary *)params
-		  success:(void(^)(NSArray *array))success
-		  failure:(void(^)(NSError *error))failure {
-	
-	[ApiData request:verb params:params success:^(NSArray *data) {
-		// TODO: validate that returned item(s) are all ApiData
-		if ([data count]) {
-			if (success)
-				success(data);
-		}
-		else {
-			NSError *error = [ServiceMBTA error_RZImport_unknown];
-			if (failure)
-				failure(error);
-			else
-				NSLog(@"%s ERROR: %@", __FUNCTION__, [error localizedDescription]);
-		}
-	} failure:^(NSError *error) {
-		if (failure)
-			failure(error);
-		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
-	}];
-}
-
-- (void)update_array:(NSString *)verb
-			 success:(void(^)(NSArray *array))success
-			 failure:(void(^)(NSError *error))failure {
-	NSString *msg = [NSString stringWithFormat:@"Class '%@' fails to implement %s.", NSStringFromClass([self class]), __FUNCTION__];
-	NSAssert(false, msg);
-	if (failure)
-		failure([ApiData error_missing_implementation]);
-}
-*/
-#endif
 
 // ----------------------------------------------------------------------
 #pragma mark - errors
@@ -152,8 +116,20 @@
 	RequestClient *client = [RequestClient sharedClient];
 	NSString *url = [client request:verb
 							 params:params
-							 format:jsonFormat
+#if CONFIG_useXML
+							 format:xmlFormat
+#else
+							 format:jsonFormat // default is JSON
+#endif
 							success:^(NSURLSessionDataTask *task, id responseObject) {
+								[self log_task:task];
+								MyLog(@" response = %@", responseObject);
+#if CONFIG_useXML
+#error NOT YET IMPLEMENTED
+#warning TODO - add support for XML parsing (such as blakewatters' 'XMLReader' - https://github.com/blakewatters/XML-to-NSDictionary)
+								NSXMLParser *parser = (NSXMLParser *)responseObject;
+								parser.shouldProcessNamespaces = YES;
+#endif
 								ApiData *data = item;
 								if (data)
 									[data updateFromJSON:responseObject];
@@ -173,27 +149,32 @@
 							}
 					 
 							failure:^(NSURLSessionDataTask *task, NSError *error) {
-//								[self failure:task error:error];
 								if (failure)
 									failure(error);
 								else
 									NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 							}];
-	NSLog(@" request URL = '%@'", url);
+	MyLog(@" request URL = '%@'", url);
+}
+
++ (void)log_task:(NSURLSessionDataTask *)task {
+	NSURLRequest *request = [task originalRequest];
+	NSURL *url = request.URL;
+	NSString *requestStr = [url absoluteString];
+	MyLog(@" request = '%@'", requestStr);
+	
+#ifdef DEBUG
+	// log HTTP headers in request and response
+	MyLog(@"\n requestHeaders = %@\n", [request allHTTPHeaderFields]);
+	
+	NSURLResponse *response = [task response];
+	if ([response respondsToSelector:@selector(allHeaderFields)]) {
+		NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
+		MyLog(@" responseHeaders = %@", headers);
+	}
+#endif
 }
 
 // --------------------------------------------------
-#pragma mark -
-// --------------------------------------------------
 
-- (void)success:(NSURLSessionDataTask *)task response:(id)responseObject {
-	//	self.data = [ApiData itemForJSON:responseObject key:[self key]];
-//	self.data = [ApiData itemForJSON:responseObject verb:self.verb params:self.params];
-}
-
-- (void)failure:(NSURLSessionDataTask *)task error:(NSError *)error {
-	NSLog(@"ApiRequest error: %@", [error localizedDescription]);
-}
-
-// ----------------------------------------------------------------------
 @end

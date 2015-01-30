@@ -1,6 +1,6 @@
 //
 //  ApiStops.m
-//  RestKitTester
+//  MBTA-RZImport
 //
 //  Created by Steve Caine on 12/26/14.
 //  Copyright (c) 2014 Steve Caine. All rights reserved.
@@ -24,7 +24,6 @@
 
 @implementation ApiStop
 
-#if CONFIG_USE_RZImport
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"stop_id"				: @"ID",
@@ -36,7 +35,42 @@
 			 @"stop_order"			: @"order"
 			 };
 }
-#endif
+
+// compares 'cur_stops' (objects) with 'a_stops' (deserialized JSONs),
+// updating those that match and replacing those that don't
+#warning TODO update this for new sub-classes of ApiStop as they're created
++ (NSArray *)updateStops:(NSArray *)cur_stops withStops:(NSArray *)a_stops forClass:(id)class_of_ApiStop {
+	NSArray *result = nil;
+	if ([cur_stops count] == 0) { // no existing stops (creating new stopsbylocation object)
+		result = [class_of_ApiStop rzi_objectsFromArray:a_stops];
+	}
+	else { // yes existing stops (updating existing stopsbylocation object)
+		NSMutableArray *new_stops = [NSMutableArray array];
+		NSMutableArray *updated_stops = [NSMutableArray array];
+		
+		for (NSDictionary *d_stop in a_stops) {
+			BOOL updated = NO;
+			for (ApiStop *cur_stop in cur_stops) {
+				NSString *stop_id = [d_stop objectForKey:key_stop_id];
+				if ([stop_id isEqualToString:cur_stop.ID]) {
+					[cur_stop rzi_importValuesFromDict:d_stop];
+					[updated_stops addObject:cur_stop];
+					updated = YES;
+					break;
+				}
+			}
+			if (!updated) {
+				ApiStop *new_stop = [class_of_ApiStop rzi_objectFromDictionary:d_stop];
+				[new_stops addObject:new_stop];
+			}
+		}
+		// stops *not* in json are discarded (from existing ApiStopsByLocation object)
+		result = [NSArray arrayWithArray:updated_stops];
+		// new stops in json are added (*all* if this is new ApiStopsByLocation object)
+		result = [result arrayByAddingObjectsFromArray:new_stops];
+	}
+	return result;
+}
 
 - (CLLocationCoordinate2D) location {
 	CLLocationCoordinate2D result = {0,0};
@@ -46,6 +80,7 @@
 	}
 	return result;
 }
+
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
 	
@@ -91,7 +126,6 @@
 }
 - (void)update_success:(void(^)(ApiStopsByRoute *stops))success
 			   failure:(void(^)(NSError *error))failure {
-#warning TO TEST
 	[super internal_update_success:^(ApiData *item) {
 		NSAssert(item == self, @"Update failed to return original item.");
 		if (success)
@@ -157,7 +191,6 @@
 }
 - (void)update_success:(void(^)(ApiStopsByLocation *stops))success
 			   failure:(void(^)(NSError *error))failure {
-#warning TODO
 	[super internal_update_success:^(ApiData *item) {
 		NSAssert(item == self, @"Update failed to return original item.");
 		if (success)
@@ -180,35 +213,7 @@
 
 - (void)updateFromJSON:(NSDictionary *)json {
 	NSArray *a_stops = [json objectForKey:key_stop];
-#warning TODO - move this into a +mergeStops:withStops: method?
-	if ([self.stops count] == 0) { // no existing stops (creating new stopsbylocation object)
-		self.stops = [ApiStop rzi_objectsFromArray:a_stops];
-	}
-	else { // yes existing stops (updating existing stopsbylocation object)
-		NSMutableArray *new_stops = [NSMutableArray array];
-		NSMutableArray *updated_stops = [NSMutableArray array];
-		
-		for (NSDictionary *d_stop in a_stops) {
-			BOOL updated = NO;
-			for (ApiStop *cur_stop in self.stops) {
-				NSString *stop_id = [d_stop objectForKey:key_stop_id];
-				if ([stop_id isEqualToString:cur_stop.ID]) {
-					[cur_stop rzi_importValuesFromDict:d_stop];
-					[updated_stops addObject:cur_stop];
-					updated = YES;
-					break;
-				}
-			}
-			if (!updated) {
-				ApiStop *new_stop = [ApiStop rzi_objectFromDictionary:d_stop];
-				[new_stops addObject:new_stop];
-			}
-		}
-		// stops *not* in json are discarded (from existing ApiStopsByLocation object)
-		self.stops = [NSArray arrayWithArray:updated_stops];
-		// new stops in json are added (*all* if this is new ApiStopsByLocation object)
-		self.stops = [self.stops arrayByAddingObjectsFromArray:new_stops];
-	}
+	self.stops = [ApiStop updateStops:self.stops withStops:a_stops forClass:[ApiStop class]];
 }
 
 - (NSString *)description {

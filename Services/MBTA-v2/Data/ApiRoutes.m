@@ -1,6 +1,6 @@
 //
 //  ApiRoute.m
-//  RestKitTester
+//  MBTA-RZImport
 //
 //  Created by Steve Caine on 12/26/14.
 //  Copyright (c) 2014 Steve Caine. All rights reserved.
@@ -18,9 +18,7 @@
 
 #import "Debug_iOS.h"
 
-#if CONFIG_USE_RZImport
 static ApiRoutes *sRoutes;
-#endif
 
 // --------------------------------------------------
 //#pragma mark -
@@ -37,7 +35,7 @@ NSUInteger num_strs_RouteMode = sizeof(strs_RouteMode)/sizeof(strs_RouteMode[0])
 
 RouteMode mode_for_name(NSString *mode_name) {
 	RouteMode result = mode_unknown;
-	NSUInteger index = 0;
+	NSUInteger index = 1;
 	while (index < num_strs_RouteMode) {
 		if ([mode_name isEqualToString:strs_RouteMode[index]]) {
 			result = index;
@@ -57,19 +55,16 @@ NSString *name_for_mode(RouteMode mode) {
 // --------------------------------------------------
 #pragma mark -
 // --------------------------------------------------
-#if CONFIG_USE_RZImport
 
 @implementation ApiRouteDirections
 @end
 
-#endif
 // --------------------------------------------------
 #pragma mark -
 // --------------------------------------------------
 
 @implementation ApiRouteDirection
 
-#if CONFIG_USE_RZImport
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"direction_id"   : @"ID",
@@ -78,13 +73,13 @@ NSString *name_for_mode(RouteMode mode) {
 }
 - (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
 	if ([key isEqualToString:key_stop]) {
-		self.stops = [ApiStop rzi_objectsFromArray:value];
+		self.stops = [ApiStop updateStops:self.stops withStops:value forClass:[ApiStop class]];
 		return NO;
 	}
 	return YES;
 }
-// compares 'old_directions' (objects) with 'new_directions' (deserialized JSONs),
-// updating those that match (-isOurData:) and replacing those that don't
+// compares 'cur_directions' (objects) with 'a_directions' (deserialized JSONs),
+// updating those that match and replacing those that don't
 + (NSArray *)updateDirections:(NSArray *)cur_directions withDirections:(NSArray *)a_directions {
 	NSArray *result = nil;
 	
@@ -114,14 +109,13 @@ NSString *name_for_mode(RouteMode mode) {
 				[new_directions addObject:new_direction];
 			}
 		}
-		// directions *not* in json are discarded (from existing ApiRoutes object)
+		// old directions *not* found in json are discarded (from existing ApiRoutes object)
 		result = [NSArray arrayWithArray:updated_directions];
-		// new directions in json are added (*all* if this is new ApiRoutes object)
+		// new directions found in json are added (*all* if this is new ApiRoutes object)
 		result = [result arrayByAddingObjectsFromArray:new_directions];
 	}
 	return result;
 }
-#endif
 
 - (NSString *)description {
 	NSMutableString *result = [NSMutableString stringWithFormat:@"<%@ %p>", NSStringFromClass([self class]), self];
@@ -148,7 +142,6 @@ NSString *name_for_mode(RouteMode mode) {
 
 @implementation ApiRoute
 
-#if CONFIG_USE_RZImport
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"route_id"   : @"ID",
@@ -163,7 +156,6 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
-#endif
 
 - (void)addStops_success:(void(^)(ApiRoute *route))success
 				 failure:(void(^)(NSError *error))failure {
@@ -220,7 +212,6 @@ NSString *name_for_mode(RouteMode mode) {
 
 @implementation ApiRouteMode
 
-#if CONFIG_USE_RZImport
 + (NSDictionary *)rzi_customMappings {
 	return @{
 			 @"route_type" : @"type",
@@ -237,7 +228,7 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
-// compares 'old_modes' (objects) with 'new_modes' (deserialized JSONs),
+// compares 'cur_modes' (objects) with 'a_modes' (deserialized JSONs),
 // updating those that match (-isOurData:) and replacing those that don't
 + (NSArray *)updateModes:(NSArray *)cur_modes withModes:(NSArray *)a_modes {
 	NSArray *result = nil;
@@ -270,7 +261,7 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return result;
 }
-#endif
+
 // match route_type and mode_name values in dict against our own
 - (BOOL)isOurData:(NSDictionary *)dict {
 	BOOL result = NO;
@@ -327,12 +318,6 @@ NSString *name_for_mode(RouteMode mode) {
 
 static ApiRoutes *sRoutes;
 
-#if DEBUG_static_routes // for testing only
-+ (ApiRoutes *)routes {
-	return sRoutes;
-}
-#endif
-
 + (void)initialize {
 	MyLog(@"%s called.", __FUNCTION__);
 }
@@ -366,13 +351,6 @@ static ApiRoutes *sRoutes;
 	}];
 }
 
-//static ApiRoutes *sRoutes;
-//#if CONFIG_USE_RZImport
-//+ (id)rzi_existingObjectForDict:(NSDictionary *)dict {
-//	return sRoutes;
-//}
-//#endif
-
 - (ApiRoute *)routeByID:(NSString *)routeID {
 	ApiRoute *result = nil;
 	for (ApiRouteMode * mode in self.modes) {
@@ -399,38 +377,8 @@ static ApiRoutes *sRoutes;
 
 - (void)updateFromJSON:(NSDictionary *)json {
 	NSArray *a_modes = [json objectForKey:key_mode];
-#if 1
 	self.modes = [ApiRouteMode updateModes:self.modes withModes:a_modes];
-#else
 	
-	if ([self.modes count] == 0) { // no existing modes (creating new routes object)
-		self.modes = [ApiRouteMode rzi_objectsFromArray:a_modes];
-	}
-	else { // yes existing modes (updating existing routes object)
-		NSMutableArray     *new_modes = [NSMutableArray array];
-		NSMutableArray *updated_modes = [NSMutableArray array];
-		
-		for (NSDictionary *d_mode in a_modes) {
-			BOOL updated = NO;
-			for (ApiRouteMode *cur_mode in self.modes) {
-				if ([cur_mode isOurData:d_mode]) {
-					[cur_mode rzi_importValuesFromDict:d_mode];
-					[updated_modes addObject:cur_mode];
-					updated = YES;
-					break;
-				}
-			}
-			if (!updated) {
-				ApiRouteMode *new_mode = [ApiRouteMode rzi_objectFromDictionary:d_mode];
-				[new_modes addObject:new_mode];
-			}
-		}
-		// modes *not* in json are discarded (from existing ApiRoutes object)
-		self.modes = [NSArray arrayWithArray:updated_modes];
-		// new modes in json are added (*all* if this is new ApiRoutes object)
-		self.modes = [self.modes arrayByAddingObjectsFromArray:new_modes];
-	}
-#endif
 	if (_all_routes)
 		[_all_routes removeAllObjects];
 	else
@@ -496,7 +444,6 @@ static ApiRoutes *sRoutes;
 }
 - (void)update_success:(void(^)(ApiRoutesByStop *item))success
 			   failure:(void(^)(NSError *error))failure {
-#warning TODO
 	[super internal_update_success:^(ApiData *item) {
 		NSAssert(item == self, @"Update failed to return original item.");
 		if (success)
@@ -509,7 +456,6 @@ static ApiRoutes *sRoutes;
 	}];
 }
 
-#if CONFIG_USE_RZImport
 - (BOOL)rzi_shouldImportValue:(id)value forKey:(NSString *)key {
 	if ([key isEqualToString:key_mode]) {
 		self.modes = [ApiRouteMode rzi_objectsFromArray:value];
@@ -517,7 +463,6 @@ static ApiRoutes *sRoutes;
 	}
 	return YES;
 }
-#endif
 
 // NO '-initWithJSON:' as we call '+rzi_objectFromDictionary' directly
 

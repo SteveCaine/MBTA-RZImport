@@ -175,6 +175,10 @@ didCompleteWithError:(NSError *)error
         });
     } else {
         dispatch_async(url_session_manager_processing_queue(), ^{
+#if DEBUG_logRawResponse // SPC 2015-01-30 write raw response to Xcode debugger console
+			NSString *text = [[NSString alloc] initWithData:self.mutableData encoding:NSUTF8StringEncoding];
+			NSLog(@"\n\nraw response = '%@'\n\n", text);
+#endif
             NSError *serializationError = nil;
             responseObject = [manager.responseSerializer responseObjectForResponse:task.response data:[NSData dataWithData:self.mutableData] error:&serializationError];
 

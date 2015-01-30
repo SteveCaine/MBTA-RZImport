@@ -8,6 +8,7 @@
 
 #import "RequestClient.h"
 
+#warning TODO - add JSON cache
 //#import "AFJSONResponseSerializerWithData.h"
 #import "ServiceMBTA.h"
 
@@ -88,12 +89,17 @@
 - (instancetype)initWithBaseURL:(NSURL *)url {
 	self = [super initWithBaseURL:url];
 	if (self) {
-		self.responseSerializer = [AFJSONResponseSerializer serializer];
+#if CONFIG_useJSON
 		// SPC 07-22-14 from Greg Fiumara's blog
 		// http://blog.gregfiumara.com/archives/239
 //		self.responseSerializer = [AFJSONResponseSerializerWithData serializer];
 		
-		self.requestSerializer  = [AFJSONRequestSerializer  serializer];
+		self.responseSerializer = [AFJSONResponseSerializer serializer];
+//		self.requestSerializer  = [AFJSONRequestSerializer  serializer];
+#elif CONFIG_useXML
+		self.responseSerializer = [AFXMLParserResponseSerializer serializer];
+//		self.requestSerializer  = [AFXMLRequestSerializer  serializer];
+#endif
 	}
 	return self;
 }

@@ -1,6 +1,6 @@
 //
 //  ApiRoutes.h
-//  RestKitTester
+//  MBTA-RZImport
 //
 //  Created by Steve Caine on 12/26/14.
 //  Copyright (c) 2014 Steve Caine. All rights reserved.
@@ -70,9 +70,6 @@ typedef enum : NSUInteger {
 			   failure:(void(^)(NSError *error))failure;
 // CALC
 - (ApiRoute *)routeByID:(NSString *)routeID;
-#if DEBUG_static_routes // for testing only
-+ (ApiRoutes *)routes;
-#endif
 @end
 
 // ----------------------------------------------------------------------
