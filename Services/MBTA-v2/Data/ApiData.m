@@ -9,10 +9,13 @@
 #import "ApiData.h"
 #import "ApiData_private.h"
 #import "ApiData+RZImport.h"
+#import "ApiXMLParserDelegate.h"
 
 #import "RequestClient.h"
-
 #import "ServiceMBTA+RZImport.h"
+
+#if CONFIG_useXML
+#endif
 
 #import "Debug_iOS.h"
 
@@ -125,11 +128,28 @@
 								[self log_task:task];
 								MyLog(@" response = %@", responseObject);
 #if CONFIG_useXML
-#error NOT YET IMPLEMENTED
-#warning TODO - add support for XML parsing (such as blakewatters' 'XMLReader' - https://github.com/blakewatters/XML-to-NSDictionary)
 								NSXMLParser *parser = (NSXMLParser *)responseObject;
 								parser.shouldProcessNamespaces = YES;
+								ApiXMLParserDelegate *delegate = [[ApiXMLParserDelegate alloc] init];
+								parser.delegate = delegate;
+								[parser parse];
+								
+								NSDictionary *result = [delegate data];
+								delegate = nil;
+								
+#error NOT YET FULLY IMPLEMENTED
+								NSArray *allKeys = [result allKeys];
+								NSString *key = [allKeys firstObject];
+								if ([key length]) {
+									MyLog(@" response key = '%@'", key);
+									responseObject = [result objectForKey:key];
+//									MyLog(@" XML response = %@", responseObject);
+								}
+								else
+									responseObject = nil;
 #endif
+								MyLog(@" responseObject = %@", responseObject);
+								
 								ApiData *data = item;
 								if (data)
 									[data updateFromJSON:responseObject];

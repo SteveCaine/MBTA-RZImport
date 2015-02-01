@@ -25,6 +25,7 @@
 		8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E821A747B090074281A /* Debug_iOS.cpp */; };
 		8E9D5EC41A747B090074281A /* Debug_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E841A747B090074281A /* Debug_iOS.m */; };
 		8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E861A747B090074281A /* Debug_JSON.m */; };
+		8EA387051A7DDC90001F010E /* ApiXMLParserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA387041A7DDC90001F010E /* ApiXMLParserDelegate.m */; };
 		8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8041A61C861007D37E7 /* ApiData.m */; };
 		8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8061A61C861007D37E7 /* ApiRoutes.m */; };
 		8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8081A61C861007D37E7 /* ApiStops.m */; };
@@ -79,6 +80,8 @@
 		8E9D5E861A747B090074281A /* Debug_JSON.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug_JSON.m; sourceTree = "<group>"; };
 		8E9D5EBF1A747B090074281A /* LICENSE */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		8E9D5EC01A747B090074281A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
+		8EA387031A7DDC90001F010E /* ApiXMLParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiXMLParserDelegate.h; sourceTree = "<group>"; };
+		8EA387041A7DDC90001F010E /* ApiXMLParserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiXMLParserDelegate.m; sourceTree = "<group>"; };
 		8EBDE8031A61C861007D37E7 /* ApiData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData.h; sourceTree = "<group>"; };
 		8EBDE8041A61C861007D37E7 /* ApiData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiData.m; sourceTree = "<group>"; };
 		8EBDE8051A61C861007D37E7 /* ApiRoutes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiRoutes.h; sourceTree = "<group>"; };
@@ -276,6 +279,8 @@
 				8EBDE8081A61C861007D37E7 /* ApiStops.m */,
 				8EBDE8091A61C861007D37E7 /* ApiTime.h */,
 				8EBDE80A1A61C861007D37E7 /* ApiTime.m */,
+				8EA387031A7DDC90001F010E /* ApiXMLParserDelegate.h */,
+				8EA387041A7DDC90001F010E /* ApiXMLParserDelegate.m */,
 			);
 			path = Data;
 			sourceTree = "<group>";
@@ -471,6 +476,7 @@
 				8EBDE8141A61C861007D37E7 /* ApiTime.m in Sources */,
 				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
 				8EBDE81E1A61CA5E007D37E7 /* ServiceMBTA+RZImport.m in Sources */,
+				8EA387051A7DDC90001F010E /* ApiXMLParserDelegate.m in Sources */,
 				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
 				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
 				8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */,

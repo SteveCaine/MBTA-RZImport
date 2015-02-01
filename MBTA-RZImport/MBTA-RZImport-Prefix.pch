@@ -43,7 +43,7 @@ typedef struct { CLLocationDegrees latitude; CLLocationDegrees longitude; } CLLo
 
 // this compile-time needs flag to be in the 'Pods' Xcode project, specifically in file
 //		./Pods/AFNetworking/Support Files/Pods-AFNetworking-prefix.pch
-// the added code it controls is in
+// the added code it controls is here in the Xcode PROJECT (not the same as the filesystem path!)
 //		./Pods/AFNetworking/NSURLSession/AFURLResponseSerialization.m
 // in method '-URLSession:task:didCompleteWithError:'
 //
