@@ -272,6 +272,12 @@ static ApiStopsByLocation	*sStopsByLocation;
 	// Dispose of any resources that can be recreated.
 }
 
+- (void)dealloc {
+	// in case someday this VC is not the only one in this app
+	// cancel any '-performSelector:' calls before we go away
+	[NSObject cancelPreviousPerformRequestsWithTarget:self];
+}
+
 // ----------------------------------------------------------------------
 #pragma mark - Segues
 // ----------------------------------------------------------------------
@@ -502,7 +508,10 @@ static ApiStopsByLocation	*sStopsByLocation;
 				[cell setSelected:YES animated:YES];
 				[cell setSelected: NO animated:YES];
 				
-				// wait awhile, then go back to original state
+				// cancel any previously posted 'reset' calls
+				[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetForVerb:) object:verb];
+				
+				// now wait awhile, then reset table row to its original state
 				[self performSelector:@selector(resetForVerb:) withObject:verb afterDelay:3.0];
 			}
 			UIView *accessoryView = cell.accessoryView;

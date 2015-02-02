@@ -7,5 +7,5 @@
 // SPC 2015-01-30 flag to enable/disable writing
 // of full text of JSON/XML response to NSLog()
 #ifdef DEBUG
-#define DEBUG_logRawResponse	1
+#define DEBUG_logRawResponse	0
 #endif

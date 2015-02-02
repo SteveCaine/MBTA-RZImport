@@ -19,7 +19,7 @@
 // each level in this 'stack' contains *last* element added to that level of our growing tree
 @property (strong, nonatomic) NSMutableArray *dictionaryStack;
 @property (strong, nonatomic) NSMutableString *textInProgress;
-@property (strong, nonatomic) NSError *error;
+@property (strong, nonatomic) NSError *internal_error;
 
 @property (strong, nonatomic) NSString *prefix;
 @end
@@ -39,7 +39,7 @@
 }
 
 - (NSError *)error {
-	return self.error;
+	return self.internal_error;
 }
 
 // ----------------------------------------------------------------------
@@ -49,9 +49,10 @@
 - (instancetype)init {
 	self = [super init];
 	if (self) {
+		_putChildrenInArrays = YES;
 		_dictionaryStack = [NSMutableArray arrayWithObject:[NSMutableDictionary dictionary]];
 		_textInProgress = [[NSMutableString alloc] init];
-	//	_error remains nil
+	//	_internal_error remains nil
 	}
 	return self;
 }
@@ -59,7 +60,7 @@
 - (void)reset {
 	self.dictionaryStack = [NSMutableArray arrayWithObject:[NSMutableDictionary dictionary]];
 	self.textInProgress = [[NSMutableString alloc] init];
-	self.error = nil;
+	self.internal_error = nil;
 }
 
 // ----------------------------------------------------------------------
@@ -82,6 +83,56 @@ didStartElement:(NSString *)elementName
 	NSMutableDictionary *child = [NSMutableDictionary dictionary];
 	[child addEntriesFromDictionary:attributeDict];
 	
+#if 1
+	id existingValue = [parent objectForKey:elementName];
+	if (existingValue) {
+		// see comment on this property in header file
+		if (self.putChildrenInArrays) {
+			NSAssert([existingValue isKindOfClass:[NSMutableArray class]], @"_putChildrenInArrays logic error.");
+			// add this new child to the existing array of children of this type
+			NSMutableArray *array = (NSMutableArray *)existingValue;
+			[array addObject:child];
+		}
+		else {
+			// already an array? again, just add child to it
+			if ([existingValue isKindOfClass:[NSMutableArray class]]) {
+				NSMutableArray *array = (NSMutableArray *)existingValue;
+				[array addObject:child];
+			}
+			else {
+				// not an array? then put it and this child in new array,
+				// and set that array on parent keyed to elementName
+				NSMutableArray *array = [NSMutableArray array];
+				[array addObject:existingValue];
+				[array addObject:child];
+				[parent setObject:array forKey:elementName];
+			}
+		}
+	}
+	else {
+		if (self.putChildrenInArrays) {
+			// always store children in arrays
+			NSMutableArray *array = [NSMutableArray array];
+			[array addObject:child];
+			[parent setObject:array forKey:elementName];
+		}
+		else {
+			// store single child of this type directly on parent keyed to elementName
+			[parent setObject:child forKey:elementName];
+		}
+	}
+#elif 1
+	// for JSON-equivalent XML, child objects always stored in array?
+	if (existingValue) {
+		NSAssert([existingValue isKindOfClass:[NSMutableArray class]], @"XML is not JSON-equivalent?");
+		NSMutableArray *array = (NSMutableArray *)existingValue;
+		[array addObject:child];
+	}
+	else {
+		NSMutableArray *array = [NSMutableArray arrayWithObject:child];
+		[parent setObject:array forKey:elementName];
+	}
+#else
 	// if parent already has child(ren) with this 'elementName'
 	// we'll need an array to hold them all
 	id existingValue = [parent objectForKey:elementName];
@@ -109,6 +160,7 @@ didStartElement:(NSString *)elementName
 		// no existing value for this key, so add new element directly to parent
 		[parent setObject:child forKey:elementName];
 	}
+#endif
 	// update stack (latest child added to this level of the growing tree)
 	[self.dictionaryStack addObject:child];
 
@@ -149,7 +201,7 @@ didStartElement:(NSString *)elementName
 // ----------------------------------------------------------------------
 
 - (void)parser:(NSXMLParser *)parser parseErrorOccurred:(NSError *)parseError {
-	self.error = parseError;
+	self.internal_error = parseError;
 }
 
 // ----------------------------------------------------------------------

@@ -14,9 +14,6 @@
 #import "RequestClient.h"
 #import "ServiceMBTA+RZImport.h"
 
-#if CONFIG_useXML
-#endif
-
 #import "Debug_iOS.h"
 
 #define str_unknown_error			@"ApiData: Unknown error."
@@ -128,27 +125,38 @@
 								[self log_task:task];
 								MyLog(@" response = %@", responseObject);
 #if CONFIG_useXML
+								// AFNetworking returns an NSXMLParser object loaded with response data,
+								// it's our job to parse that data
 								NSXMLParser *parser = (NSXMLParser *)responseObject;
 								parser.shouldProcessNamespaces = YES;
 								ApiXMLParserDelegate *delegate = [[ApiXMLParserDelegate alloc] init];
 								parser.delegate = delegate;
 								[parser parse];
+								responseObject = nil; // finished with parser
 								
-								NSDictionary *result = [delegate data];
-								delegate = nil;
-								
-#error NOT YET FULLY IMPLEMENTED
-								NSArray *allKeys = [result allKeys];
-								NSString *key = [allKeys firstObject];
-								if ([key length]) {
-									MyLog(@" response key = '%@'", key);
-									responseObject = [result objectForKey:key];
-//									MyLog(@" XML response = %@", responseObject);
+								if ([delegate error] == nil) {
+									// our parser delegate returns data from the MBTA's XML responses
+									// in a structure compatible with the its JSON responses:
+									// the root is a dictionary with a single array item
+									// and all child elements in the entire tree
+									// are stored in a single array item on their parent
+									NSDictionary *result = [delegate data];
+									
+//									MyLog(@" result = %@", result);
+									
+									NSArray *allKeys = [result allKeys];
+									NSString *key = [allKeys firstObject];
+									if ([key length]) {
+//										MyLog(@" response key = '%@'", key);
+										NSArray *array = [result objectForKey:key];
+										NSAssert([array isKindOfClass:[NSArray class]], @"Child nodes should always be arrays.");
+										responseObject = [array firstObject];
+									}
 								}
-								else
-									responseObject = nil;
+								delegate = nil;
+#else
+//								MyLog(@" responseObject = %@", responseObject);
 #endif
-								MyLog(@" responseObject = %@", responseObject);
 								
 								ApiData *data = item;
 								if (data)
