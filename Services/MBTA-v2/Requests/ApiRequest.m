@@ -10,7 +10,7 @@
 #import "ApiRequest_private.h"
 
 #import "ApiData.h"
-#import "ApiData+RZImport.h"
+#import "ApiData_private.h"
 
 #import "RequestClient.h"
 

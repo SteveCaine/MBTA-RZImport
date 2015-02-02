@@ -10,6 +10,10 @@
 
 #import "ServiceMBTA_strings.h"
 
+#define str_error_unknown		@"Service MBTA: Request failed, unknown error."
+#define str_error_notApiData	@"Service MBTA: Request returned invalid data type(s)."
+#define str_error_tooManyItems	@"Service MBTA: Request for single item returned multiple items."
+
 NSString * const str_BaseURL = @"http://realtime.mbta.com/developer/api/v2/";
 
 #warning TEST KEY FOR DEVELOPERS, DO NOT USE IN PRODUCTION CODE!
@@ -128,39 +132,24 @@ static NSUInteger num_xml_replys = sizeof(xml_replys)/sizeof(xml_replys[0]);
 
 // ----------------------------------------------------------------------
 
-#if 0
-+ (NSString *)replyForVerb:(NSString *)verb {
-	NSUInteger index = [ServiceMBTA indexForVerb:verb];
-#if CONFIG_useXML
-	if (index < num_xml_replys)
-		return xml_replys[index];
-#else
-	if (index < num_json_replys)
-		return json_replys[index];
-#endif
-	return nil;
-}
-#endif
-
-// ----------------------------------------------------------------------
-
-+ (NSDictionary *)default_params {
-	static NSDictionary *result;
-	if (result == nil) {
-		result = @{
-				   param_api_key: str_key_API,
-#if CONFIG_useXML
-				   param_format	: @"xml"
-#else
-				   param_format	: @"json"
-#endif
-				   };
-	}
-	return result;
++ (NSError *)error_unknown {
+	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
+									  code:-1
+								  userInfo:@{ NSLocalizedDescriptionKey : str_error_unknown }];
 }
 
-// ----------------------------------------------------------------------
++ (NSError *)error_notApiData {
+	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
+									  code:-2
+								  userInfo:@{ NSLocalizedDescriptionKey : str_error_notApiData }];
+}
 
-@end
++ (NSError *)error_tooManyItems {
+	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
+									  code:-3
+								  userInfo:@{ NSLocalizedDescriptionKey : str_error_tooManyItems }];
+}
 
 // --------------------------------------------------
+
+@end

@@ -8,11 +8,15 @@
 
 #import "ApiData.h"
 #import "ApiData_private.h"
-#import "ApiData+RZImport.h"
 #import "ApiXMLParserDelegate.h"
 
 #import "RequestClient.h"
-#import "ServiceMBTA+RZImport.h"
+#import "ServiceMBTA.h"
+#import "ServiceMBTA_strings.h"
+
+#import "ApiRoutes.h"
+#import "ApiStops.h"
+#import "ApiTime.h"
 
 #import "Debug_iOS.h"
 
@@ -36,7 +40,7 @@
 				success(data);
 		}
 		else {
-			NSError *error = [ServiceMBTA error_RZImport_unknown];
+			NSError *error = [ServiceMBTA error_unknown];
 			if (failure)
 				failure(error);
 			else
@@ -61,6 +65,60 @@
 		else
 			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
 	}];
+}
+
+// ----------------------------------------------------------------------
+
+// factory method to create different ApiData types based on request's verb+params
++ (ApiData *)itemForJSON:(NSDictionary *)json
+					verb:(NSString *)verb
+				  params:(NSDictionary *)params {
+	NSAssert([json isKindOfClass:[NSDictionary class]], @"Invalid param type.");
+	
+	ApiData *result = nil;
+	
+	if ([json isKindOfClass:[NSDictionary class]]) {
+		
+		// these responses return a single dictionary
+		// so we call 'rzi_objectFromDictionary' directly;
+		if ([verb isEqualToString:verb_servertime]) {
+			result = [ApiTime rzi_objectFromDictionary:json];
+		}
+		else if ([verb isEqualToString:verb_routesbystop]) {
+			result = [ApiRoutesByStop rzi_objectFromDictionary:json];
+		}
+		// schedulebystop
+		// predictionsbyroute
+		// predictionsbystop
+		// predictionsbytrip
+		// vehiclesbyroute
+		// vehiclesbytrip
+		// alertsbyid
+		
+		// these responses return an array of dictionaries under one key
+		// so we alloc/init object here, and it calls the appropriate 'rzi_' methods internally
+		else if ([verb isEqualToString:verb_routes]) {
+			result = [[ApiRoutes alloc] initWithJSON:json];
+		}
+		else if ([verb isEqualToString:verb_stopsbyroute]) {
+			result = [[ApiStopsByRoute alloc] initWithJSON:json];
+		}
+		else if ([verb isEqualToString:verb_stopsbylocation]) {
+			result = [[ApiStopsByLocation alloc] initWithJSON:json];
+		}
+		// alerts
+		// alertsbyroute
+		// alertsbystop
+		// alertheaders
+		// alertheadersbyroute
+		// alertheadersbystop
+	}
+	
+	// unused: none of our requests return a raw array of objects
+	else if ([json isKindOfClass:[NSArray class]]) {
+	}
+	
+	return result;
 }
 
 // ----------------------------------------------------------------------

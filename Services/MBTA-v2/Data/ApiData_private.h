@@ -25,6 +25,10 @@
 - (void)internal_update_success:(void(^)(ApiData *item))success
 						failure:(void(^)(NSError *error))failure;
 
++ (ApiData *)itemForJSON:(NSDictionary *)json
+					verb:(NSString *)verb
+				  params:(NSDictionary *)params;
+
 - (instancetype)initWithJSON:(NSDictionary *)json;
 
 - (void)updateFromJSON:(NSDictionary *)json;
