@@ -16,6 +16,8 @@
 #import "ApiStops.h"
 #import "ApiTime.h"
 
+#import "ApiTimeRequest.h"
+
 #import "EXTScope.h"
 
 #import "Debug_iOS.h"
@@ -40,6 +42,7 @@ static ApiStopsByLocation	*sStopsByLocation;
 // ----------------------------------------------------------------------
 
 @interface MasterViewController ()
+@property (strong, nonatomic) ApiTimeRequest *timeRequest;
 @end
 
 // ----------------------------------------------------------------------
@@ -57,6 +60,25 @@ static ApiStopsByLocation	*sStopsByLocation;
 - (void)get_servertime {
 	@weakify(self)
 	[ApiTime get_success:^(ApiTime *servertime) {
+		MyLog(@"\n\n%s servertime = %@\n\n", __FUNCTION__, servertime);
+		@strongify(self)
+		[self show_success:servertime verb:verb_servertime];
+	} failure:^(NSError *error) {
+		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		@strongify(self)
+		[self show_failure_verb:verb_servertime];
+	}];
+}
+
+- (void)request_servertime {
+	if (self.timeRequest == nil)
+		self.timeRequest = [[ApiTimeRequest alloc] init];
+	
+	@weakify(self)
+	[self.timeRequest refresh_success:^(ApiRequest *request) {
+		ApiData *time = [request response];
+		NSAssert([time isKindOfClass:[ApiTime class]], @"Wrong ApiData subclass returned by request.");
+		ApiTime *servertime = (ApiTime *)time;
 		MyLog(@"\n\n%s servertime = %@\n\n", __FUNCTION__, servertime);
 		@strongify(self)
 		[self show_success:servertime verb:verb_servertime];
@@ -297,9 +319,8 @@ static ApiStopsByLocation	*sStopsByLocation;
 // ----------------------------------------------------------------------
 #pragma mark - UITableViewDataSource
 // ----------------------------------------------------------------------
-#warning TODO - make this 2-section table? top section does 'request', bottom section does 'get' and 'update'?
 - (NSInteger)numberOfSectionsInTableView:(UITableView *)tableView {
-	return 1;
+	return 2;
 }
 
 - (NSInteger)tableView:(UITableView *)tableView numberOfRowsInSection:(NSInteger)section {
@@ -312,18 +333,30 @@ static ApiStopsByLocation	*sStopsByLocation;
 	NSString *text = [ServiceMBTA verbForIndex:indexPath.row];
 	
 	BOOL enabled = NO;
-	switch (indexPath.row) {
-		case e_verb_servertime:
-		case e_verb_routes:
-		case e_verb_routesbystop:
-		case e_verb_stopsbylocation:
-			enabled = YES;
-			break;
-		case e_verb_stopsbyroute:
-			enabled = (sRoutes != nil);
-			break;
-		default:
-			break;
+	if (indexPath.section == 0) {		// direct 'get'
+		switch (indexPath.row) {
+			case e_verb_servertime:
+			case e_verb_routes:
+			case e_verb_routesbystop:
+			case e_verb_stopsbylocation:
+				enabled = YES;
+				break;
+			case e_verb_stopsbyroute:
+				enabled = (sRoutes != nil);
+				break;
+			default:
+				break;
+		}
+	}
+	else if (indexPath.section == 1) {	// indirect 'request'
+		switch (indexPath.row) {
+			case e_verb_servertime:
+				enabled = YES;
+				break;
+			default:
+				break;
+		}
+		
 	}
 	cell.userInteractionEnabled = cell.textLabel.enabled = cell.detailTextLabel.enabled = enabled;
 	
@@ -337,6 +370,21 @@ static ApiStopsByLocation	*sStopsByLocation;
 //	cell.selectionStyle = UITableViewCellSelectionStyleNone;
 
 	return cell;
+}
+
+- (NSString *)tableView:(UITableView *)tableView titleForHeaderInSection:(NSInteger)section {
+	NSString *result = @"???";
+	switch (section) {
+		case 0:
+			result = @"get data";
+			break;
+		case 1:
+			result = @"request data";
+			break;
+		default:
+			break;
+	}
+	return result;
 }
 
 // ----------------------------------------------------------------------
@@ -358,57 +406,71 @@ static ApiStopsByLocation	*sStopsByLocation;
 	}
 	cell.detailTextLabel.text = @"requesting ...";
 	
-	switch (indexPath.row) {
-		
-		case e_verb_servertime:
-			[self get_servertime];
-			break;
-		
-		case e_verb_routes:
-			if (sRoutes == nil)
-				[self get_routes];
-			else
-				[self update_routes];
-			break;
-		
-		case e_verb_routesbystop:
-			if (sRoutesByStop == nil)
-				[self get_routesbystop];
-			else
-				[self update_routesbystop];
-			break;
-		
-		case e_verb_stopsbyroute:
-			if (sRoutes) {
+	if (indexPath.section == 0) {
+		switch (indexPath.row) {
+				
+			case e_verb_servertime:
+				[self get_servertime];
+				break;
+				
+			case e_verb_routes:
+				if (sRoutes == nil)
+					[self get_routes];
+				else
+					[self update_routes];
+				break;
+				
+			case e_verb_routesbystop:
+				if (sRoutesByStop == nil)
+					[self get_routesbystop];
+				else
+					[self update_routesbystop];
+				break;
+				
+			case e_verb_stopsbyroute:
+				if (sRoutes) {
 #if CONFIG_stops_update_route
-				if (sRoute71 == nil)
-					[self get_stopsbyroute];
-				else
-					[self update_stopsbyroute];
+					if (sRoute71 == nil)
+						[self get_stopsbyroute];
+					else
+						[self update_stopsbyroute];
 #else
-				if (sStopsByRoute == nil)
-					[self get_stopsbyroute];
-				else
-					[self update_stopsbyroute];
+					if (sStopsByRoute == nil)
+						[self get_stopsbyroute];
+					else
+						[self update_stopsbyroute];
 #endif
-			}
-			else { // stop spinner, reset cell to pre-request state
+				}
+				else { // stop spinner, reset cell to pre-request state
+					[spinner stopAnimating];
+					cell.detailTextLabel.text = @"idle";
+				}
+				break;
+			case e_verb_stopsbylocation:
+				if (sStopsByLocation == nil) {
+					[self get_stopsbylocation];
+				}
+				else
+					[self update_stopsbylocation];
+				break;
+				
+			default:
 				[spinner stopAnimating];
 				cell.detailTextLabel.text = @"idle";
-			}
-			break;
-		case e_verb_stopsbylocation:
-			if (sStopsByLocation == nil) {
-				[self get_stopsbylocation];
-			}
-			else
-				[self update_stopsbylocation];
-			break;
-		
-		default:
-			[spinner stopAnimating];
-			cell.detailTextLabel.text = @"idle";
-			break;
+				break;
+		}
+	}
+	else if (indexPath.section == 1) {
+		switch (indexPath.row) {
+				
+			case e_verb_servertime:
+				[self request_servertime];
+				break;
+			default:
+				[spinner stopAnimating];
+				cell.detailTextLabel.text = @"idle";
+				break;
+		}
 	}
 }
 

@@ -17,6 +17,7 @@
 #define verb_routesbystop			@"routesbystop"
 #define verb_stopsbyroute			@"stopsbyroute"
 #define verb_stopsbylocation		@"stopsbylocation"
+/*
 #define schedulebystop				@"schedulebystop"
 #define schedulebyroute				@"schedulebyroute"
 #define schedulebytrip				@"schedulebytrip"
@@ -32,16 +33,18 @@
 #define alertheaders				@"alertheaders"
 #define alertheadersbyroute			@"alertheadersbyroute"
 #define alertheadersbystop			@"alertheadersbystop"
-
+// the rest *TK* when supporting code is implemented
+*/
 // ----------------------------------------------------------------------
 // REQUESTS
+/*
 #define request_servertime			@"servertime"
 #define request_routes				@"routes"
 #define request_routesbystop		@"routesbystop"
 #define request_stopsbyroute		@"stopsbyroute"
 #define request_stopsbylocation		@"stopsbylocation"
 // the rest *TK* when supporting code is implemented
-
+*/
 // ----------------------------------------------------------------------
 // RESPONSES (XML only)
 #define response_servertime			@"server_time"

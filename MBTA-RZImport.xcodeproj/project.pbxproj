@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		8E2EFBDC1A8015E200675A11 /* ApiTimeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */; };
+		8E2EFBDD1A8015F000675A11 /* ApiRoutesRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE864F41A6303B5001D3871 /* ApiRoutesRequest.m */; };
+		8E2EFBDE1A80160000675A11 /* ApiRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB321A61DA3300C55B5A /* ApiRequest.m */; };
 		8E4BD7261A61AB1300B51B0B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7251A61AB1300B51B0B /* Foundation.framework */; };
 		8E4BD7281A61AB1300B51B0B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7271A61AB1300B51B0B /* CoreGraphics.framework */; };
 		8E4BD72A1A61AB1300B51B0B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7291A61AB1300B51B0B /* UIKit.framework */; };
@@ -445,6 +448,7 @@
 				8E4BD7361A61AB1300B51B0B /* AppDelegate.m in Sources */,
 				8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */,
 				8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */,
+				8E2EFBDC1A8015E200675A11 /* ApiTimeRequest.m in Sources */,
 				8E4BD73C1A61AB1300B51B0B /* MasterViewController.m in Sources */,
 				8E4BD7321A61AB1300B51B0B /* main.m in Sources */,
 				8E9D5EC41A747B090074281A /* Debug_iOS.m in Sources */,
@@ -453,7 +457,9 @@
 				8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */,
 				8EBDE8141A61C861007D37E7 /* ApiTime.m in Sources */,
 				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
+				8E2EFBDE1A80160000675A11 /* ApiRequest.m in Sources */,
 				8EA387051A7DDC90001F010E /* ApiXMLParserDelegate.m in Sources */,
+				8E2EFBDD1A8015F000675A11 /* ApiRoutesRequest.m in Sources */,
 				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
 				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
 				8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */,
