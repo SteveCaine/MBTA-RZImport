@@ -8,8 +8,9 @@
 
 /* Begin PBXBuildFile section */
 		8E2EFBDC1A8015E200675A11 /* ApiTimeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */; };
-		8E2EFBDD1A8015F000675A11 /* ApiRoutesRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE864F41A6303B5001D3871 /* ApiRoutesRequest.m */; };
+		8E2EFBDD1A8015F000675A11 /* ApiRoutesRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE864F41A6303B5001D3871 /* ApiRoutesRequests.m */; };
 		8E2EFBDE1A80160000675A11 /* ApiRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB321A61DA3300C55B5A /* ApiRequest.m */; };
+		8E3593B01A8042E800F8704B /* ApiStopsRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E3593AF1A8042E800F8704B /* ApiStopsRequests.m */; };
 		8E4BD7261A61AB1300B51B0B /* Foundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7251A61AB1300B51B0B /* Foundation.framework */; };
 		8E4BD7281A61AB1300B51B0B /* CoreGraphics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7271A61AB1300B51B0B /* CoreGraphics.framework */; };
 		8E4BD72A1A61AB1300B51B0B /* UIKit.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8E4BD7291A61AB1300B51B0B /* UIKit.framework */; };
@@ -53,6 +54,8 @@
 /* Begin PBXFileReference section */
 		19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MBTA-RZImport.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		75AE2E2D8EE10D8D2521C6D4 /* Pods-MBTA-RZImport.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.debug.xcconfig"; sourceTree = "<group>"; };
+		8E3593AE1A8042E800F8704B /* ApiStopsRequests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiStopsRequests.h; path = Requests/ApiStopsRequests.h; sourceTree = "<group>"; };
+		8E3593AF1A8042E800F8704B /* ApiStopsRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiStopsRequests.m; path = Requests/ApiStopsRequests.m; sourceTree = "<group>"; };
 		8E4BD7221A61AB1300B51B0B /* MBTA-RZImport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MBTA-RZImport.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		8E4BD7251A61AB1300B51B0B /* Foundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Foundation.framework; path = System/Library/Frameworks/Foundation.framework; sourceTree = SDKROOT; };
 		8E4BD7271A61AB1300B51B0B /* CoreGraphics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreGraphics.framework; path = System/Library/Frameworks/CoreGraphics.framework; sourceTree = SDKROOT; };
@@ -95,8 +98,8 @@
 		8EBDE80D1A61C861007D37E7 /* ServiceMBTA.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceMBTA.m; sourceTree = "<group>"; };
 		8EBDE80F1A61C861007D37E7 /* ServiceMBTA_strings.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ServiceMBTA_strings.h; sourceTree = "<group>"; };
 		8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ServiceMBTA_strings.m; sourceTree = "<group>"; };
-		8EE864F31A6303B5001D3871 /* ApiRoutesRequest.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiRoutesRequest.h; path = Requests/ApiRoutesRequest.h; sourceTree = "<group>"; };
-		8EE864F41A6303B5001D3871 /* ApiRoutesRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiRoutesRequest.m; path = Requests/ApiRoutesRequest.m; sourceTree = "<group>"; };
+		8EE864F31A6303B5001D3871 /* ApiRoutesRequests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiRoutesRequests.h; path = Requests/ApiRoutesRequests.h; sourceTree = "<group>"; };
+		8EE864F41A6303B5001D3871 /* ApiRoutesRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiRoutesRequests.m; path = Requests/ApiRoutesRequests.m; sourceTree = "<group>"; };
 		8EFBEB281A61CD6500C55B5A /* RequestClient.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = RequestClient.h; path = Client/RequestClient.h; sourceTree = "<group>"; };
 		8EFBEB291A61CD6500C55B5A /* RequestClient.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = RequestClient.m; path = Client/RequestClient.m; sourceTree = "<group>"; };
 		8EFBEB2C1A61D7C000C55B5A /* EXTScope.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = EXTScope.h; sourceTree = "<group>"; };
@@ -304,10 +307,12 @@
 				8EFBEB311A61DA3300C55B5A /* ApiRequest.h */,
 				8EFBEB371A61E1A400C55B5A /* ApiRequest_private.h */,
 				8EFBEB321A61DA3300C55B5A /* ApiRequest.m */,
+				8EE864F31A6303B5001D3871 /* ApiRoutesRequests.h */,
+				8EE864F41A6303B5001D3871 /* ApiRoutesRequests.m */,
+				8E3593AE1A8042E800F8704B /* ApiStopsRequests.h */,
+				8E3593AF1A8042E800F8704B /* ApiStopsRequests.m */,
 				8EFBEB341A61DAD200C55B5A /* ApiTimeRequest.h */,
 				8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */,
-				8EE864F31A6303B5001D3871 /* ApiRoutesRequest.h */,
-				8EE864F41A6303B5001D3871 /* ApiRoutesRequest.m */,
 			);
 			name = Requests;
 			sourceTree = "<group>";
@@ -448,6 +453,7 @@
 				8E4BD7361A61AB1300B51B0B /* AppDelegate.m in Sources */,
 				8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */,
 				8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */,
+				8E3593B01A8042E800F8704B /* ApiStopsRequests.m in Sources */,
 				8E2EFBDC1A8015E200675A11 /* ApiTimeRequest.m in Sources */,
 				8E4BD73C1A61AB1300B51B0B /* MasterViewController.m in Sources */,
 				8E4BD7321A61AB1300B51B0B /* main.m in Sources */,
@@ -459,7 +465,7 @@
 				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
 				8E2EFBDE1A80160000675A11 /* ApiRequest.m in Sources */,
 				8EA387051A7DDC90001F010E /* ApiXMLParserDelegate.m in Sources */,
-				8E2EFBDD1A8015F000675A11 /* ApiRoutesRequest.m in Sources */,
+				8E2EFBDD1A8015F000675A11 /* ApiRoutesRequests.m in Sources */,
 				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
 				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
 				8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */,

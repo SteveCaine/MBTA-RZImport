@@ -8,22 +8,16 @@
 
 #import <Foundation/Foundation.h>
 
-#warning TODO - do away with Request class hierarchy in this branch!
 // ----------------------------------------------------------------------
 @class ApiData;
 
 @interface ApiRequest : NSObject
 
-// or just make these private?
-//@property (copy, nonatomic, readonly) NSString *verb;
-//@property (copy, nonatomic, readonly) NSString *key;
-
+// subclasses MUST override this
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure;
 
 - (ApiData *)response; // an ApiData subclass specific to the request
-
-- (NSString *)result;	// short string describing response
 
 @end
 

@@ -8,24 +8,37 @@
 
 #import "ApiRequest.h"
 
+#import "ApiRoutesRequests.h"
+#import "ApiStopsRequests.h"
+
 // ----------------------------------------------------------------------
 
-// private
 @interface ApiRequest ()
 
-//@property (copy, nonatomic, readwrite) NSString *verb;
-//@property (copy, nonatomic, readwrite) NSString *key;
-@property (  copy, nonatomic) NSString *verb;
-//@property (  copy, nonatomic) NSString *key;
+@property (strong, nonatomic) ApiData  *data; // request-specific subclass of ApiData
 
-@property (strong, nonatomic) NSMutableDictionary *params;
-@property (strong, nonatomic) ApiData *data; // the request-appropriate subclass of ApiData
-
-// bypass 'staleAge' logic, always make fresh request to service
-- (void)get_success:(void(^)(ApiRequest *request))success
-			failure:(void(^)(NSError *error))failure;
-
-- (double)staleAge; // subclasses MUST override this
+// subclasses MUST override these
+- (NSString *)key;
+- (double)staleAge;
 
 @end
 
+// ----------------------------------------------------------------------
+
+@interface ApiRoutesByStopRequest ()
+@property (copy, nonatomic) NSString *stopID;
+@end
+
+// ----------------------------------------------------------------------
+
+@interface ApiStopsByRouteRequest ()
+@property (copy, nonatomic) NSString *routeID;
+@end
+
+// ----------------------------------------------------------------------
+
+@interface ApiStopsByLocationRequest ()
+@property (assign, nonatomic) CLLocationCoordinate2D location;
+@end
+
+// ----------------------------------------------------------------------

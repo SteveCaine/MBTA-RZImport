@@ -10,24 +10,39 @@
 
 #import "ApiRequest_private.h"
 
-#import "ServiceMBTA_strings.h"
+#import "ApiTime.h"
 
 // ----------------------------------------------------------------------
 
 @implementation ApiTimeRequest
 
-- (double)staleAge {
-	return 0.0; // always get fresh
+//#pragma mark - public
+
+- (void)refresh_success:(void(^)(ApiRequest *request))success
+				failure:(void(^)(NSError *error))failure {
+	// always get fresh, no need to check for existing JSON/XML file
+	[ApiTime get_success:^(ApiTime *data) {
+		self.data = data;
+		if (success)
+			success(self);
+	} failure:^(NSError *error) {
+		if (failure)
+			failure(error);
+		else
+			NSLog(@"ApiTimeRequest error: %@", [error localizedDescription]);
+	}];
 }
 
-- (instancetype)init {
-	self = [super init];
-	if (self) {
-		super.verb = verb_servertime;
-//		super.key = verb_servertime;
-//		super.params remains nil
-	}
-	return self;
+// ----------------------------------------------------------------------
+//#pragma mark - private
+// ----------------------------------------------------------------------
+
+- (NSString *)key {
+	return nil; // always get fresh
+}
+
+- (double)staleAge {
+	return 0.0; // ditto
 }
 
 @end

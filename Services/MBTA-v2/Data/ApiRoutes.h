@@ -22,8 +22,6 @@ typedef enum : NSUInteger {
 } RouteMode;
 
 // ----------------------------------------------------------------------
-//@class ApiRouteMode;
-// ----------------------------------------------------------------------
 
 @interface ApiRouteDirection : ApiData
 
@@ -40,8 +38,8 @@ typedef enum : NSUInteger {
 @property (  copy, nonatomic) NSString	*ID;
 @property (  copy, nonatomic) NSString	*name;
 @property (  copy, nonatomic) NSString	*noUI; // BOOL
-@property (assign, nonatomic) RouteMode	mode;
-@property (strong, nonatomic) NSArray  *directions;
+@property (assign, nonatomic) RouteMode	 mode;
+@property (strong, nonatomic) NSArray   *directions;
 
 - (void)addStops_success:(void(^)(ApiRoute *route))success
 				 failure:(void(^)(NSError *error))failure;
