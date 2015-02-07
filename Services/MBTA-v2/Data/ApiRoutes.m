@@ -277,7 +277,7 @@ NSString *name_for_mode(RouteMode mode) {
 			}
 		}
 	}
-	MyLog(@"%s %p returns %s", __FUNCTION__, dict, (result ? "YES" : "NO"));
+//	MyLog(@"%s %p returns %s", __FUNCTION__, dict, (result ? "YES" : "NO"));
 	return result;
 }
 

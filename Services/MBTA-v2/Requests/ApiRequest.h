@@ -13,6 +13,10 @@
 
 @interface ApiRequest : NSObject
 
++ (NSString *)keyForRequest:(NSString *)request;
+
++ (id)cachedJSONForKey:(NSString *)key staleAge:(double)staleAge;
+
 // subclasses MUST override this
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure;

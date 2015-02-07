@@ -15,7 +15,7 @@
 	#import <Foundation/Foundation.h>
 #endif
 
-// to save us from adding entire CL framework just for this one typedef
+// to save us from adding entire CoreLocation framework just for this one typedef
 // (shouldn't the second '__has_include' return NO?)
 #if defined(__has_include) && __has_include(<CoreLocation/CoreLocation.h>)
 typedef double CLLocationDegrees;

@@ -24,6 +24,8 @@
 
 - (NSDictionary *)data;
 
+- (NSDictionary *)onlyChild;
+
 - (NSError *)error;
 
 - (void)reset; // clear current data, ready to parse fresh tree of XML

@@ -29,6 +29,8 @@
 + (NSString *)verbForIndex:(NSUInteger)index;
 + (NSUInteger)indexForVerb:(NSString *)verb;
 
++ (BOOL)isResponseCachedForVerb:(NSString *)verb;
+
 // ----------------------------------------------------------------------
 
 + (NSError *)error_unknown;

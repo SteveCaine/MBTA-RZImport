@@ -639,24 +639,27 @@ static NSUInteger	sSection_requests = 1;
 			NSIndexPath *indexPath = [NSIndexPath indexPathForRow:row inSection:section];
 			UITableViewCell *cell = [self.tableView cellForRowAtIndexPath:indexPath];
 			
-			if ([text length]) {
-				cell.detailTextLabel.text = text;
-				
-				// flash cell briefly to indicate response has arrived
-				[cell setSelected:YES animated:YES];
-				[cell setSelected: NO animated:YES];
-				
-				// cancel any previously posted 'reset' calls
-				[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetForIndexPath:) object:indexPath];
-				
-				// now wait awhile, then reset table row to its original state
-				[self performSelector:@selector(resetForIndexPath:) withObject:indexPath afterDelay:3.0];
-			}
+			// flash cell briefly to indicate response has arrived
+			[cell setSelected:YES animated:YES];
+			[cell setSelected: NO animated:YES];
+			
+			// stop spinner
 			UIView *accessoryView = cell.accessoryView;
 			if ([accessoryView isKindOfClass:[UIActivityIndicatorView class]]) {
 				UIActivityIndicatorView *spinner = (UIActivityIndicatorView *)accessoryView;
 				[spinner stopAnimating];
 			}
+			
+			// show success/failure (even empty text string)
+//			if ([text length]) {
+				cell.detailTextLabel.text = text;
+//			}
+			
+			// cancel any previously posted 'reset' calls
+			[NSObject cancelPreviousPerformRequestsWithTarget:self selector:@selector(resetForIndexPath:) object:indexPath];
+			
+			// now post new 'reset' for this row: after X seconds, reset to its original state
+			[self performSelector:@selector(resetForIndexPath:) withObject:indexPath afterDelay:3.0];
 		}
 	}
 }

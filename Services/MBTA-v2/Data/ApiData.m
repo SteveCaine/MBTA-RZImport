@@ -198,18 +198,7 @@
 									// the root is a dictionary with a single array item
 									// and all child elements in the entire tree
 									// are stored in a single array item on their parent
-									NSDictionary *result = [delegate data];
-									
-//									MyLog(@" result = %@", result);
-									
-									NSArray *allKeys = [result allKeys];
-									NSString *key = [allKeys firstObject];
-									if ([key length]) {
-//										MyLog(@" response key = '%@'", key);
-										NSArray *array = [result objectForKey:key];
-										NSAssert([array isKindOfClass:[NSArray class]], @"Child nodes should always be arrays.");
-										responseObject = [array firstObject];
-									}
+									responseObject = [delegate onlyChild];
 								}
 								delegate = nil;
 #else

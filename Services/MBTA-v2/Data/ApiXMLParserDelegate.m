@@ -38,6 +38,23 @@
 	return [self.dictionaryStack firstObject]; // may be nil
 }
 
+- (NSDictionary *)onlyChild {
+	NSDictionary *result = nil;
+	// XML responses from MBTA v2 API appear to always have this structure:
+	// the root is a dictionary with a single array item
+	// and all child elements in the entire tree
+	// are stored in a single array item on their parent
+	NSDictionary *root = [self.dictionaryStack firstObject]; // may be nil
+	NSArray *allKeys = [root allKeys];
+	NSString *key = [allKeys firstObject];
+	if ([key length]) {
+		NSArray *array = [root objectForKey:key];
+		NSAssert([array isKindOfClass:[NSArray class]], @"Child nodes should always be arrays.");
+		result = [array firstObject];
+	}
+	return result;
+}
+
 - (NSError *)error {
 	return self.internal_error;
 }

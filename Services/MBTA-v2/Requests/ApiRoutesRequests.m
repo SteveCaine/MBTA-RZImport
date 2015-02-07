@@ -9,7 +9,10 @@
 #import "ApiRoutesRequests.h"
 #import "ApiRequest_private.h"
 
+#import "ApiData_private.h"
+
 #import "ApiRoutes.h"
+#import "AppDelegate.h"
 
 #import "ServiceMBTA_strings.h"
 
@@ -19,8 +22,18 @@
 
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure {
-	// TODO: check for existing JSON/XML response file in our cache
-	if (0) {
+	
+	// check for existing JSON/XML response file in our cache
+	NSString *key = [self key];
+	id cachedJSON = [ApiRequest cachedJSONForKey:key staleAge:[self staleAge]];
+	
+	if (cachedJSON) {
+		if (self.data && [self.data isKindOfClass:[ApiRoutes class]]) {
+			[((ApiRoutes *)self.data) updateFromJSON:cachedJSON];
+		}
+		else {
+			self.data = [[ApiRoutes alloc] initWithJSON:cachedJSON];
+		}
 		if (success)
 			success(self);
 	}
@@ -61,8 +74,13 @@
 
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure {
-	// TODO: check for existing JSON/XML response file in our cache
-	if (0) {
+	
+	// check for existing JSON/XML response file in our cache
+	NSString *key = [self key];
+	id cachedJSON = [ApiRequest cachedJSONForKey:key staleAge:[self staleAge]];
+	
+	if (cachedJSON) {
+		self.data = cachedJSON;
 		if (success)
 			success(self);
 	}

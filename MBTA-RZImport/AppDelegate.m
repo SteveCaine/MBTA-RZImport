@@ -8,14 +8,191 @@
 
 #import "AppDelegate.h"
 
+#import "ServiceMBTA_strings.h"
+
+#import "Debug_iOS.h"
+
+// ----------------------------------------------------------------------
+
 @interface AppDelegate ()
 
 @end
 
+// ----------------------------------------------------------------------
+#pragma mark -
+// ----------------------------------------------------------------------
+
 @implementation AppDelegate
 
+// ----------------------------------------------------------------------
+#pragma mark - public
+// ----------------------------------------------------------------------
+
++ (NSString *)documentsDirectory {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSDocumentDirectory, NSUserDomainMask, YES);
+	return [paths firstObject];
+}
+
+// ----------------------------------------------------------------------
+
++ (NSString *)cacheDirectory {
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+	return [paths firstObject];
+}
+
+// ----------------------------------------------------------------------
+
++ (NSString *)responsesDirectory {
+	NSString *result = nil;
+	NSArray *paths = NSSearchPathForDirectoriesInDomains(NSCachesDirectory, NSUserDomainMask, YES);
+	NSString *dir = [paths firstObject];
+	if ([dir length])
+		result = [dir stringByAppendingPathComponent:cached_responses_directory];
+	return result;
+}
+
+// ----------------------------------------------------------------------
+// will replace existing files
++ (BOOL)cacheResponse:(NSData *)data asFile:(NSString *)name {
+	BOOL result = NO;
+	NSString *responsesDir = [self responsesDirectory];
+	if ([responsesDir length]) {
+		NSString *jsonPath = [responsesDir stringByAppendingPathComponent:name];
+		BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:jsonPath];
+		NSError *error = nil;
+		if (exists) {
+			BOOL cleared = [[NSFileManager defaultManager] removeItemAtPath:jsonPath error:&error];
+			if (!cleared)
+				NSLog(@" error clearing older JSON file '%@' - %@", name, [error localizedDescription]);
+		}
+		if (error == nil) {
+			result = [[NSFileManager defaultManager] createFileAtPath:jsonPath contents:data attributes:nil];
+			if (!result)
+				NSLog(@" error saving JSON as file '%@'", name);
+		}
+	}
+	return result;
+}
+
+// ----------------------------------------------------------------------
+// may be JSON or XML
++ (NSString *)fileForKey:(NSString *)key {
+	NSString *result = nil;
+
+	NSString *jsonFile = [self jsonFileForKey:key];
+	NSString  *xmlFile = [self  xmlFileForKey:key];
+	
+	if ([jsonFile length] == 0)
+		result = xmlFile;
+	else if ([xmlFile length] == 0)
+		result = jsonFile;
+	else {
+		// which is the earliest file? (missing file/error returns 0.0)
+		double jsonAge = [self ageOfFile:jsonFile error:nil];
+		double  xmlAge = [self ageOfFile:xmlFile  error:nil];
+		
+		if (jsonAge > 0.0 && xmlAge > 0.0) { // else both are bogus
+			if (jsonAge < xmlAge)
+				result = jsonFile;
+			else
+				result = xmlFile;
+		}
+	}
+
+//	NSString *dataDirectory = [[self cacheDirectory] stringByAppendingPathComponent:cached_responses_directory];
+//	NSString *name = [key stringByAppendingPathExtension:format_json];
+//	NSString *path = [dataDirectory stringByAppendingPathComponent:name];
+//	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+//		result = path;
+//	}
+//	else {
+//		name = [key stringByAppendingPathExtension:format_xml];
+//		path = [dataDirectory stringByAppendingPathComponent:name];
+//		if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+//			result = path;
+//		}
+//	}
+	return result;
+}
+
+// ----------------------------------------------------------------------
++ (NSString *)jsonFileForKey:(NSString *)key {
+	NSString *result = nil;
+	
+	NSString *dataDirectory = [[self cacheDirectory] stringByAppendingPathComponent:cached_responses_directory];
+	NSString *name = [key stringByAppendingPathExtension:format_json];
+	NSString *path = [dataDirectory stringByAppendingPathComponent:name];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+		result = path;
+	}
+	return result;
+}
+// ----------------------------------------------------------------------
++ (NSString *)xmlFileForKey:(NSString *)key {
+	NSString *result = nil;
+	
+	NSString *dataDirectory = [[self cacheDirectory] stringByAppendingPathComponent:cached_responses_directory];
+	NSString *name = [key stringByAppendingPathExtension:format_xml];
+	NSString *path = [dataDirectory stringByAppendingPathComponent:name];
+	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
+		result = path;
+	}
+	return result;
+}
+
+// ----------------------------------------------------------------------
+// return 0 if fileNotFound or error, caller should check if error is NSFileReadNoSuchFileError
++ (double)ageOfFile:(NSString *)filePath error:(NSError **)error {
+	double result = 0.0;
+	NSDictionary *attribs = [[NSFileManager defaultManager] attributesOfItemAtPath:filePath error:error];
+	if (attribs && !*error) {
+		NSDate *date = [attribs objectForKey:NSFileModificationDate];
+		result = -[date timeIntervalSinceNow];
+	}
+	return result;
+}
+
+// ----------------------------------------------------------------------
+#pragma mark - overrides
+// ----------------------------------------------------------------------
+
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions {
+#ifdef DEBUG
+	MyLog(@"*** %@ ***", str_AppName());
+	NSDate *now = [NSDate date];
+	MyLog(@"launched at %@ on %@", str_logTime(now), str_logDate(now));
+	MyLog(@"%@", str_device_OS_UDID());
+	MyLog(@" app path = '%@'", str_AppPath());
+	//	MyLog(@" doc path = '%@'", str_DocumentsPath());
+	MyLog(@"json path = '%@'", [AppDelegate responsesDirectory]);
+	MyLog(@"\n%s", __FUNCTION__);
+	
+	if(getenv( "NSDebugEnabled"))
+		MyLog(@"NSDebugEnabled == YES");
+	if(getenv( "NSZombieEnabled"))
+		MyLog(@"NSZombieEnabled == YES");
+	if(getenv( "NSAutoreleaseFreedObjectCheckEnabled"))
+		MyLog(@"NSAutoreleaseFreedObjectCheckEnabled == YES");
+#endif
 	// Override point for customization after application launch.
+	
+	// if cached responses folder doesn't already exist, create it
+	NSString *responsesDir = [AppDelegate responsesDirectory];
+	if ([responsesDir length]) {
+		if (![[NSFileManager defaultManager] fileExistsAtPath:responsesDir]) {
+			NSError *error = nil;
+			if ([[NSFileManager defaultManager] createDirectoryAtPath:responsesDir
+										  withIntermediateDirectories:NO
+														   attributes:nil
+																error:&error]) {
+			}
+			else
+				NSLog(@"Error creating JSONs directory: %@", [error localizedDescription]);
+		}
+	}
+	else
+		NSLog(@"No path for JSON files cache.");
+	
 	return YES;
 }
 							

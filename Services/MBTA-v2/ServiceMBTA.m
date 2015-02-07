@@ -130,6 +130,20 @@ static NSUInteger num_xml_replys = sizeof(xml_replys)/sizeof(xml_replys[0]);
 	return [a_verbs indexOfObject:verb];
 }
 
++ (BOOL)isResponseCachedForVerb:(NSString *)verb {
+	BOOL result = YES;
+	
+	switch ([self indexForVerb:verb]) {
+		case e_verb_servertime:
+		case e_verb_stopsbylocation:
+			result = NO;
+			break;
+		default:
+			break;
+	}
+	return result;
+}
+
 // ----------------------------------------------------------------------
 
 + (NSError *)error_unknown {

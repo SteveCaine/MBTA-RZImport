@@ -11,6 +11,10 @@
 #define MBTA_APIs_ErrorDomain		@"MBTA_APIs_ErrorDomain"
 
 // ----------------------------------------------------------------------
+// CACHED RESPONSES
+#define cached_responses_directory	@"cached-responses"
+
+// ----------------------------------------------------------------------
 // VERBS
 #define verb_servertime				@"servertime"
 #define verb_routes					@"routes"
@@ -52,7 +56,7 @@
 #define response_routesbystop		@"route_list"
 #define response_stopsbyroute		@"stop_list"
 #define response_stopsbylocation	@"stop_list"
-// ditto to note above
+// the rest *TK* when supporting code is implemented
 
 // ----------------------------------------------------------------------
 // REQUEST KEYS
