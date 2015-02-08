@@ -13,7 +13,10 @@
 //	http://realtime.mbta.com/developer/api/v2/stopsbylocation?lat=<latitude>&lon=<longitude>&api_key=<myKey>&format=[json/xml]
 //
 //  Created by Steve Caine on 12/30/14.
-//  Copyright (c) 2014 Steve Caine. All rights reserved.
+//
+//	This code is distributed under the terms of the MIT license.
+//
+//	Copyright (c) 2014-2015 Steve Caine.
 //
 
 #import <Foundation/Foundation.h>

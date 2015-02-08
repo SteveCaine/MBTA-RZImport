@@ -5,7 +5,10 @@
 //
 //
 //  Created by Steve Caine on 01/31/15.
-//  Copyright (c) 2015 Steve Caine. All rights reserved.
+//
+//	This code is distributed under the terms of the MIT license.
+//
+//	Copyright (c) 2015 Steve Caine.
 //
 
 #import <Foundation/Foundation.h>

@@ -1,6 +1,6 @@
 //
 //  AFJSONResponseSerializerWithData.m
-//  MBTA-Requester
+//  MBTA-RZImport
 //
 //	save raw JSON data into text file in subfolder of app's Caches folder
 //
