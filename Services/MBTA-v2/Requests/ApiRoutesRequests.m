@@ -10,10 +10,7 @@
 #import "ApiRequest_private.h"
 
 #import "ApiData_private.h"
-
 #import "ApiRoutes.h"
-#import "AppDelegate.h"
-
 #import "ServiceMBTA_strings.h"
 
 // ----------------------------------------------------------------------
@@ -25,14 +22,14 @@
 	
 	// check for existing JSON/XML response file in our cache
 	NSString *key = [self key];
-	id cachedJSON = [ApiRequest cachedJSONForKey:key staleAge:[self staleAge]];
+	id cachedResponse = [ApiRequest cachedResponseForKey:key staleAge:[self staleAge]];
 	
-	if (cachedJSON) {
+	if (cachedResponse) {
 		if (self.data && [self.data isKindOfClass:[ApiRoutes class]]) {
-			[((ApiRoutes *)self.data) updateFromJSON:cachedJSON];
+			[self.data updateFromResponse:cachedResponse];
 		}
 		else {
-			self.data = [[ApiRoutes alloc] initWithJSON:cachedJSON];
+			self.data = [[ApiRoutes alloc] initWithResponse:cachedResponse];
 		}
 		if (success)
 			success(self);
@@ -77,10 +74,15 @@
 	
 	// check for existing JSON/XML response file in our cache
 	NSString *key = [self key];
-	id cachedJSON = [ApiRequest cachedJSONForKey:key staleAge:[self staleAge]];
+	id cachedResponse = [ApiRequest cachedResponseForKey:key staleAge:[self staleAge]];
 	
-	if (cachedJSON) {
-		self.data = cachedJSON;
+	if (cachedResponse) {
+		if (self.data && [self.data isKindOfClass:[ApiRoutesByStop class]]) {
+			[self.data updateFromResponse:cachedResponse];
+		}
+		else {
+			self.data = [ApiData itemForResponse:cachedResponse verb:verb_routesbystop params:nil];
+		}
 		if (success)
 			success(self);
 	}

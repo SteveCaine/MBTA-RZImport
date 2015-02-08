@@ -9,8 +9,8 @@
 #import "ApiStopsRequests.h"
 #import "ApiRequest_private.h"
 
+#import "ApiData_private.h"
 #import "ApiStops.h"
-
 #import "ServiceMBTA_strings.h"
 
 // ----------------------------------------------------------------------
@@ -19,8 +19,17 @@
 
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure {
-	// TODO: check for existing JSON/XML response file in our cache
-	if (0) {
+	// check for existing JSON/XML response file in our cache
+	NSString *key = [self key];
+	id cachedResponse = [ApiRequest cachedResponseForKey:key staleAge:[self staleAge]];
+	
+	if (cachedResponse) {
+		if (self.data && [self.data isKindOfClass:[ApiStopsByRoute class]]) {
+			[self.data updateFromResponse:cachedResponse];
+		}
+		else {
+			self.data = [[ApiStopsByRoute alloc] initWithResponse:cachedResponse];
+		}
 		if (success)
 			success(self);
 	}
@@ -74,7 +83,8 @@
 - (void)refresh_success:(void(^)(ApiRequest *request))success
 				failure:(void(^)(NSError *error))failure {
 	
-	// never cached, location is infinitly variable in two dimensions
+	// never cached, always make fresh request
+	// since location is infinitely variable in two dimensions
 	[ApiStopsByLocation get4location:self.location
 							 success:^(ApiStopsByLocation *data) {
 								 self.data = data;

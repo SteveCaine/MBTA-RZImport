@@ -53,6 +53,8 @@
 + (void)get4location:(CLLocationCoordinate2D)location
 			 success:(void(^)(ApiStopsByLocation *stops))success
 			 failure:(void(^)(NSError *error))failure;
+// a real app would never 'update' an existing stops-by-location object
+// as a user's location is infinitely variable in two dimensions
 - (void)update_success:(void(^)(ApiStopsByLocation *stops))success
 			   failure:(void(^)(NSError *error))failure;
 @end

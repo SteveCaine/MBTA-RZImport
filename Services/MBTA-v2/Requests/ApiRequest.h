@@ -15,7 +15,7 @@
 
 + (NSString *)keyForRequest:(NSString *)request;
 
-+ (id)cachedJSONForKey:(NSString *)key staleAge:(double)staleAge;
++ (id)cachedResponseForKey:(NSString *)key staleAge:(double)staleAge;
 
 // subclasses MUST override this
 - (void)refresh_success:(void(^)(ApiRequest *request))success

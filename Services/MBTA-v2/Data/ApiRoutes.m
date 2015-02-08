@@ -78,7 +78,7 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
-// compares 'cur_directions' (objects) with 'a_directions' (deserialized JSONs),
+// compares 'cur_directions' (objects) with 'a_directions' (deserialized JSON/XML),
 // updating those that match and replacing those that don't
 + (NSArray *)updateDirections:(NSArray *)cur_directions withDirections:(NSArray *)a_directions {
 	NSArray *result = nil;
@@ -109,9 +109,9 @@ NSString *name_for_mode(RouteMode mode) {
 				[new_directions addObject:new_direction];
 			}
 		}
-		// old directions *not* found in json are discarded (from existing ApiRoutes object)
+		// old directions *not* found in response are discarded (from existing ApiRoutes object)
 		result = [NSArray arrayWithArray:updated_directions];
-		// new directions found in json are added (*all* if this is new ApiRoutes object)
+		// new directions found in response are added (*all* if this is new ApiRoutes object)
 		result = [result arrayByAddingObjectsFromArray:new_directions];
 	}
 	return result;
@@ -162,26 +162,33 @@ NSString *name_for_mode(RouteMode mode) {
 	NSDictionary *params = @{ param_route : self.ID };
 	
 	[ApiData get_item:verb_stopsbyroute params:params success:^(ApiData *data) {
-		self.stopsbyroute = (ApiStopsByRoute *)data;
-		self.directions = self.stopsbyroute.directions;
-		if (success) {
-			success(self);
+		if (data && [data isKindOfClass:[self class]]) {
+			self.stopsbyroute = (ApiStopsByRoute *)data;
+			self.directions = self.stopsbyroute.directions;
+			if (success)
+				success(self);
+		}
+		else {
+			NSError *error = (data ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'add stops' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
+			
 		}
 	} failure:^(NSError *error) {
-		NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"%@ 'add stops' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
 - (void)updateStops_success:(void(^)(ApiRoute *route))success
 					failure:(void(^)(NSError *error))failure {
 	[self.stopsbyroute update_success:^(ApiStopsByRoute *stops) {
-		NSAssert(stops == self.stopsbyroute, @"Update failed to return original item.");
 		self.directions = self.stopsbyroute.directions;
-		if (success) {
+		if (success)
 			success(self);
-		}
 	} failure:^(NSError *error) {
-		NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"%@ 'update' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
@@ -228,7 +235,7 @@ NSString *name_for_mode(RouteMode mode) {
 	}
 	return YES;
 }
-// compares 'cur_modes' (objects) with 'a_modes' (deserialized JSONs),
+// compares 'cur_modes' (objects) with 'a_modes' (deserialized JSON/XML),
 // updating those that match (-isOurData:) and replacing those that don't
 + (NSArray *)updateModes:(NSArray *)cur_modes withModes:(NSArray *)a_modes {
 	NSArray *result = nil;
@@ -254,9 +261,9 @@ NSString *name_for_mode(RouteMode mode) {
 				[new_modes addObject:new_mode];
 			}
 		}
-		// modes *not* in json are discarded (from existing ApiRoutes object)
+		// modes *not* in response are discarded (from existing ApiRoutes object)
 		result = [NSArray arrayWithArray:updated_modes];
-		// new modes in json are added (*all* if this is new ApiRoutes object)
+		// new modes in response are added (*all* if this is new ApiRoutes object)
 		result = [result arrayByAddingObjectsFromArray:new_modes];
 	}
 	return result;
@@ -325,29 +332,36 @@ static ApiRoutes *sRoutes;
 + (void)get_success:(void(^)(ApiRoutes *data))success
 			failure:(void(^)(NSError *error))failure {
 	[ApiData get_item:verb_routes params:nil success:^(ApiData *item) {
-		// TODO: validate that returned item IS ApiRoutes
-		if (success)
-			success((ApiRoutes *)item);
+		if (item && [item isKindOfClass:[ApiRoutes class]]) {
+			if (success)
+				success((ApiRoutes *)item);
+		}
+		else {
+			NSError *error = (item ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
+		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
 - (void)update_success:(void(^)(ApiRoutes *routes))success
 			   failure:(void(^)(NSError *error))failure {
 	[super internal_update_success:^(ApiData *item) {
-		// -super- should catch this and call our 'failure' block
-		NSAssert(item == self, @"Update failed to return original item.");
+		// -super- checks for valid ApiData subclass and calls our 'failure' block if it's not
 		if (success)
 			success((ApiRoutes *)item);
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'update' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
@@ -366,17 +380,17 @@ static ApiRoutes *sRoutes;
 	return result;
 }
 
-- (instancetype)initWithJSON:(NSDictionary *)json {
+- (instancetype)initWithResponse:(NSDictionary *)response {
 	self = [super init];
 	if (self) {
 		// nothing else to do here, so just call update
-		[self updateFromJSON:json];
+		[self updateFromResponse:response];
 	}
 	return self;
 }
 
-- (void)updateFromJSON:(NSDictionary *)json {
-	NSArray *a_modes = [json objectForKey:key_mode];
+- (void)updateFromResponse:(NSDictionary *)response {
+	NSArray *a_modes = [response objectForKey:key_mode];
 	self.modes = [ApiRouteMode updateModes:self.modes withModes:a_modes];
 	
 	if (_all_routes)
@@ -432,27 +446,35 @@ static ApiRoutes *sRoutes;
 	NSDictionary *params = @{ param_stop : stopID };
 	
 	[ApiData get_item:verb_routesbystop params:params success:^(ApiData *item) {
-		// TODO: validate that returned item IS ApiRoutesByStop
-		if (success)
-			success((ApiRoutesByStop *)item);
+		if (item && [item isKindOfClass:[ApiRoutesByStop class]]) {
+			if (success)
+				success((ApiRoutesByStop *)item);
+		}
+		else {
+			NSError *error = (item ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
+		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 - (void)update_success:(void(^)(ApiRoutesByStop *item))success
 			   failure:(void(^)(NSError *error))failure {
 	[super internal_update_success:^(ApiData *item) {
-		NSAssert(item == self, @"Update failed to return original item.");
+		// -super- checks for valid ApiData subclass and calls our 'failure' block if it's not
 		if (success)
 			success(self);
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'update' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
@@ -464,13 +486,14 @@ static ApiRoutes *sRoutes;
 	return YES;
 }
 
-// NO '-initWithJSON:' as we call '+rzi_objectFromDictionary' directly
+// NO '-initWithResponse:' as we call '+rzi_objectFromDictionary' directly
+// (either from fresh request or reading cached response)
 
-- (void)updateFromJSON:(NSDictionary *)json {
-	self.stopID = [json objectForKey:key_stop_id];
-	self.stopName = [json objectForKey:key_stop_name];
+- (void)updateFromResponse:(NSDictionary *)response {
+	self.stopID = [response objectForKey:key_stop_id];
+	self.stopName = [response objectForKey:key_stop_name];
 	
-	NSArray *a_modes = [json objectForKey:key_mode];
+	NSArray *a_modes = [response objectForKey:key_mode];
 	self.modes = [ApiRouteMode updateModes:self.modes withModes:a_modes];
 }
 

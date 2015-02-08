@@ -16,12 +16,10 @@
 // ----------------------------------------------------------------------
 
 @interface ApiXMLParserDelegate ()
-// each level in this 'stack' contains *last* element added to that level of our growing tree
-@property (strong, nonatomic) NSMutableArray *dictionaryStack;
-@property (strong, nonatomic) NSMutableString *textInProgress;
-@property (strong, nonatomic) NSError *internal_error;
-
-@property (strong, nonatomic) NSString *prefix;
+// each level in this 'stack' contains *latest* element added to that level of our growing tree
+@property (strong, nonatomic) NSMutableArray	*dictionaryStack;
+@property (strong, nonatomic) NSMutableString	*textInProgress;
+@property (strong, nonatomic) NSError			*internal_error;
 @end
 
 // ----------------------------------------------------------------------
@@ -92,15 +90,10 @@ didStartElement:(NSString *)elementName
 	NSMutableDictionary *parent = [self.dictionaryStack lastObject];
 //	MyLog(@"\n\n => %@", parent);
 	
-	// we strip 1st element from keypaths to create JSON-like response trees
-	if ([self.prefix length] == 0)
-		self.prefix = [NSString stringWithFormat:@"%@.", elementName];
-	
 	// create dictionary for this new element
 	NSMutableDictionary *child = [NSMutableDictionary dictionary];
 	[child addEntriesFromDictionary:attributeDict];
 	
-#if 1
 	id existingValue = [parent objectForKey:elementName];
 	if (existingValue) {
 		// see comment on this property in header file
@@ -138,46 +131,6 @@ didStartElement:(NSString *)elementName
 			[parent setObject:child forKey:elementName];
 		}
 	}
-#elif 1
-	// for JSON-equivalent XML, child objects always stored in array?
-	if (existingValue) {
-		NSAssert([existingValue isKindOfClass:[NSMutableArray class]], @"XML is not JSON-equivalent?");
-		NSMutableArray *array = (NSMutableArray *)existingValue;
-		[array addObject:child];
-	}
-	else {
-		NSMutableArray *array = [NSMutableArray arrayWithObject:child];
-		[parent setObject:array forKey:elementName];
-	}
-#else
-	// if parent already has child(ren) with this 'elementName'
-	// we'll need an array to hold them all
-	id existingValue = [parent objectForKey:elementName];
-	if (existingValue) {
-		
-		NSMutableArray *array = nil;
-		
-		if ([existingValue isKindOfClass:[NSMutableArray class]]) {
-			// array already exists, use it
-			array = (NSMutableArray *)existingValue;
-		}
-		else {
-			// no array yet, so create one
-			array = [NSMutableArray array];
-			// add the (first) child to this new array
-			[array addObject:existingValue];
-			// and replace it in the parent with the array that now contains it
-			[parent setObject:array forKey:elementName];
-			// so what was a single object is now an array *containing* objects
-		}
-		// now the new(est) child is added to the array
-		[array addObject:child];
-	}
-	else {
-		// no existing value for this key, so add new element directly to parent
-		[parent setObject:child forKey:elementName];
-	}
-#endif
 	// update stack (latest child added to this level of the growing tree)
 	[self.dictionaryStack addObject:child];
 

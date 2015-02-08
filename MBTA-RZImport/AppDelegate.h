@@ -21,7 +21,7 @@
 + (BOOL)cacheResponse:(NSData *)data asFile:(NSString *)name; // withExtension:(NSString *)ext;
 
 // may be JSON or XML
-+ (NSString *)fileForKey:(NSString *)key;
++ (NSString *)responseFileForKey:(NSString *)key;
 
 + (NSString *)jsonFileForKey:(NSString *)key;
 + (NSString *)xmlFileForKey:(NSString *)key;

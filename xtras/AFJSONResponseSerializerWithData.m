@@ -33,17 +33,22 @@
 		NSURL *url = [response URL];
 		NSString *request = [url absoluteString];
 		NSString *key = [ApiRequest keyForRequest:request];
-		NSString *jsonName = [key stringByAppendingPathExtension:format_json];
-#ifdef DEBUG
-		if ([jsonName length] == 0) { // bug? save file w/ cur date/time for debugging
-			NSLog(@"Failed to get key for %i-byte response '%@'", [data length], response);
+		NSString *jsonName = nil;
+		if ([key length])
+			jsonName = [key stringByAppendingPathExtension:format_json];
+#if DEBUG_saveKeylessResponses
+		else {
+			// bug? save file w/ cur date/time for debugging
+			// (but will also save do-not-cache files)
 			NSDateFormatter *formatter = [[NSDateFormatter alloc] init];
 			formatter.dateFormat = @"dd MMM HH.mm.ss"; // no colons allowed in file names
 			NSString *dateString = [formatter stringFromDate:[NSDate date]];
-			jsonName = [dateString stringByAppendingPathComponent:format_json];
+			NSLog(@"Failed to get key for %i-byte response at '%@'", (int)[data length], dateString);
+			jsonName = [dateString stringByAppendingString:[NSString stringWithFormat:@".%@",format_json]];
 		}
 #endif
-		(void) [AppDelegate cacheResponse:data asFile:jsonName];
+		if ([jsonName length])
+			(void) [AppDelegate cacheResponse:data asFile:jsonName];
 	}
 	
 	return (JSONObject);

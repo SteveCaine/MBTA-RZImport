@@ -8,7 +8,6 @@
 
 #import "RequestClient.h"
 
-//#warning TODO - add JSON cache
 #import "AFJSONResponseSerializerWithData.h"
 #import "AFXMLParserResponseSerializerWithData.h"
 #import "ServiceMBTA.h"
@@ -80,7 +79,7 @@
 		if (failure)
 			failure(task, error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 	}];
 	return result;
 }

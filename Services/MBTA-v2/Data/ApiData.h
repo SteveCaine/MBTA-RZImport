@@ -18,7 +18,8 @@
 @interface ApiData : NSObject <RZImportable>
 
 + (NSError *)error_unknown;
-+ (NSError *)error_JSON_import_failed;
++ (NSError *)error_response_import_failed;
++ (NSError *)error_wrong_subclass_ApiData;
 + (NSError *)error_missing_implementation;
 
 @end

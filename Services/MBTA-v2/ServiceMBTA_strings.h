@@ -8,11 +8,9 @@
 
 #import <Foundation/Foundation.h>
 
-#define MBTA_APIs_ErrorDomain		@"MBTA_APIs_ErrorDomain"
-
 // ----------------------------------------------------------------------
 // CACHED RESPONSES
-#define cached_responses_directory	@"cached-responses"
+#define cached_responses_directory	@"MBTA-v2-responses"
 
 // ----------------------------------------------------------------------
 // VERBS

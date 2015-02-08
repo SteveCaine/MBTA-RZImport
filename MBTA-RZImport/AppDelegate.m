@@ -55,20 +55,22 @@
 // will replace existing files
 + (BOOL)cacheResponse:(NSData *)data asFile:(NSString *)name {
 	BOOL result = NO;
-	NSString *responsesDir = [self responsesDirectory];
-	if ([responsesDir length]) {
-		NSString *jsonPath = [responsesDir stringByAppendingPathComponent:name];
-		BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:jsonPath];
-		NSError *error = nil;
-		if (exists) {
-			BOOL cleared = [[NSFileManager defaultManager] removeItemAtPath:jsonPath error:&error];
-			if (!cleared)
-				NSLog(@" error clearing older JSON file '%@' - %@", name, [error localizedDescription]);
-		}
-		if (error == nil) {
-			result = [[NSFileManager defaultManager] createFileAtPath:jsonPath contents:data attributes:nil];
-			if (!result)
-				NSLog(@" error saving JSON as file '%@'", name);
+	if ([name length]) {
+		NSString *responsesDir = [self responsesDirectory];
+		if ([responsesDir length]) {
+			NSString *responsePath = [responsesDir stringByAppendingPathComponent:name];
+			BOOL exists = [[NSFileManager defaultManager] fileExistsAtPath:responsePath];
+			NSError *error = nil;
+			if (exists) {
+				BOOL cleared = [[NSFileManager defaultManager] removeItemAtPath:responsePath error:&error];
+				if (!cleared)
+					NSLog(@" error clearing older response file '%@' - %@", name, [error localizedDescription]);
+			}
+			if (error == nil) {
+				result = [[NSFileManager defaultManager] createFileAtPath:responsePath contents:data attributes:nil];
+				if (!result)
+					NSLog(@" error saving response as file '%@'", name);
+			}
 		}
 	}
 	return result;
@@ -76,7 +78,7 @@
 
 // ----------------------------------------------------------------------
 // may be JSON or XML
-+ (NSString *)fileForKey:(NSString *)key {
++ (NSString *)responseFileForKey:(NSString *)key {
 	NSString *result = nil;
 
 	NSString *jsonFile = [self jsonFileForKey:key];
@@ -98,20 +100,6 @@
 				result = xmlFile;
 		}
 	}
-
-//	NSString *dataDirectory = [[self cacheDirectory] stringByAppendingPathComponent:cached_responses_directory];
-//	NSString *name = [key stringByAppendingPathExtension:format_json];
-//	NSString *path = [dataDirectory stringByAppendingPathComponent:name];
-//	if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-//		result = path;
-//	}
-//	else {
-//		name = [key stringByAppendingPathExtension:format_xml];
-//		path = [dataDirectory stringByAppendingPathComponent:name];
-//		if ([[NSFileManager defaultManager] fileExistsAtPath:path]) {
-//			result = path;
-//		}
-//	}
 	return result;
 }
 
@@ -162,9 +150,9 @@
 	NSDate *now = [NSDate date];
 	MyLog(@"launched at %@ on %@", str_logTime(now), str_logDate(now));
 	MyLog(@"%@", str_device_OS_UDID());
-	MyLog(@" app path = '%@'", str_AppPath());
+	MyLog(@"\napp path = '%@'", str_AppPath());
 	//	MyLog(@" doc path = '%@'", str_DocumentsPath());
-	MyLog(@"json path = '%@'", [AppDelegate responsesDirectory]);
+	MyLog(@"\ncached responses path = '%@'", [AppDelegate responsesDirectory]);
 	MyLog(@"\n%s", __FUNCTION__);
 	
 	if(getenv( "NSDebugEnabled"))
@@ -187,11 +175,11 @@
 																error:&error]) {
 			}
 			else
-				NSLog(@"Error creating JSONs directory: %@", [error localizedDescription]);
+				NSLog(@"Error creating cached responses directory: %@", [error localizedDescription]);
 		}
 	}
 	else
-		NSLog(@"No path for JSON files cache.");
+		NSLog(@"No path for response files cache.");
 	
 	return YES;
 }

@@ -21,7 +21,8 @@
 #import "Debug_iOS.h"
 
 #define str_unknown_error			@"ApiData: Unknown error."
-#define str_JSON_import_failed		@"ApiData: JSON import failed."
+#define str_response_import_failed	@"ApiData: Response import failed."
+#define str_wrong_subclass_ApiData	@"ApiData: Wrong subclass of ApiData returned."
 #define str_missing_implementation	@"ApiData: Missing implementation." // not meant to be user-facing error msg
 
 @implementation ApiData
@@ -33,6 +34,7 @@
 		 failure:(void(^)(NSError *error))failure {
 
 	[ApiData request:verb params:params item:nil success:^(ApiData *data) {
+		// callers must validate it's the correct *subclass* of ApiData
 		if ([data isKindOfClass:[ApiData class]]) {
 			data.verb = verb;
 			data.params = params; // 'copy' property
@@ -40,52 +42,60 @@
 				success(data);
 		}
 		else {
-			NSError *error = [ServiceMBTA error_unknown];
+			NSError *error = [ServiceMBTA error_notApiData];
 			if (failure)
 				failure(error);
 			else
-				NSLog(@"%s ERROR: %@", __FUNCTION__, [error localizedDescription]);
+				MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 	}];
 }
 
 - (void)internal_update_success:(void(^)(ApiData *item))success
 						failure:(void(^)(NSError *error))failure {
 	[ApiData request:self.verb params:self.params item:self success:^(ApiData *data) {
-		if (success)
-			success(data);
+		if (data && [data isKindOfClass:[self class]]) {
+			if (success)
+				success(data);
+		}
+		else {
+			NSError *error = (data ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
+			
+		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 	}];
 }
 
 // ----------------------------------------------------------------------
 
 // factory method to create different ApiData types based on request's verb+params
-+ (ApiData *)itemForJSON:(NSDictionary *)json
-					verb:(NSString *)verb
-				  params:(NSDictionary *)params {
-	NSAssert([json isKindOfClass:[NSDictionary class]], @"Invalid param type.");
-	
++ (ApiData *)itemForResponse:(NSDictionary *)response
+						verb:(NSString *)verb
+					  params:(NSDictionary *)params {
 	ApiData *result = nil;
 	
-	if ([json isKindOfClass:[NSDictionary class]]) {
+	if ([response isKindOfClass:[NSDictionary class]]) {
 		
 		// these responses return a single dictionary
 		// so we call 'rzi_objectFromDictionary' directly;
 		if ([verb isEqualToString:verb_servertime]) {
-			result = [ApiTime rzi_objectFromDictionary:json];
+			result = [ApiTime rzi_objectFromDictionary:response];
 		}
 		else if ([verb isEqualToString:verb_routesbystop]) {
-			result = [ApiRoutesByStop rzi_objectFromDictionary:json];
+			result = [ApiRoutesByStop rzi_objectFromDictionary:response];
 		}
 		// schedulebystop
 		// predictionsbyroute
@@ -98,13 +108,13 @@
 		// these responses return an array of dictionaries under one key
 		// so we alloc/init object here, and it calls the appropriate 'rzi_' methods internally
 		else if ([verb isEqualToString:verb_routes]) {
-			result = [[ApiRoutes alloc] initWithJSON:json];
+			result = [[ApiRoutes alloc] initWithResponse:response];
 		}
 		else if ([verb isEqualToString:verb_stopsbyroute]) {
-			result = [[ApiStopsByRoute alloc] initWithJSON:json];
+			result = [[ApiStopsByRoute alloc] initWithResponse:response];
 		}
 		else if ([verb isEqualToString:verb_stopsbylocation]) {
-			result = [[ApiStopsByLocation alloc] initWithJSON:json];
+			result = [[ApiStopsByLocation alloc] initWithResponse:response];
 		}
 		// alerts
 		// alertsbyroute
@@ -115,7 +125,9 @@
 	}
 	
 	// unused: none of our requests return a raw array of objects
-	else if ([json isKindOfClass:[NSArray class]]) {
+//	else if ([response isKindOfClass:[NSArray class]]) {
+	else {
+		MyLog(@"%s unexpected response type '%@' for %p", __FUNCTION__, [response class], response);
 	}
 	
 	return result;
@@ -123,7 +135,7 @@
 
 // ----------------------------------------------------------------------
 
-- (instancetype)initWithJSON:(NSDictionary *)json {
+- (instancetype)initWithResponse:(NSDictionary *)response {
 	self = [super init];
 	if (self) {
 		NSString *msg = [NSString stringWithFormat:
@@ -134,7 +146,7 @@
 	return self;
 }
 
-- (void)updateFromJSON:(NSDictionary *)json {
+- (void)updateFromResponse:(NSDictionary *)response {
 	NSString *msg = [NSString stringWithFormat:
 					 @"%s called on ApiData subclass (%@) that does not implement it.",
 					 __FUNCTION__, NSStringFromClass([self class])];
@@ -150,14 +162,19 @@
 									  code:-1
 								  userInfo:@{ NSLocalizedDescriptionKey : str_unknown_error }];
 }
-+ (NSError *)error_JSON_import_failed {
++ (NSError *)error_response_import_failed {
 	return [[NSError alloc] initWithDomain:ApiData_ErrorDomain
 									  code:-2
-								  userInfo:@{ NSLocalizedDescriptionKey : str_JSON_import_failed }];
+								  userInfo:@{ NSLocalizedDescriptionKey : str_response_import_failed }];
+}
++ (NSError *)error_wrong_subclass_ApiData {
+	return [[NSError alloc] initWithDomain:ApiData_ErrorDomain
+									  code:-3
+								  userInfo:@{ NSLocalizedDescriptionKey : str_wrong_subclass_ApiData }];
 }
 + (NSError *)error_missing_implementation {
 	return [[NSError alloc] initWithDomain:ApiData_ErrorDomain
-									  code:-3
+									  code:-4
 								  userInfo:@{ NSLocalizedDescriptionKey : str_missing_implementation }];
 }
 
@@ -177,7 +194,7 @@
 #if CONFIG_useXML
 							 format:xmlFormat
 #else
-							 format:jsonFormat // default is JSON
+							 format:jsonFormat
 #endif
 							success:^(NSURLSessionDataTask *task, id responseObject) {
 								[self log_task:task];
@@ -197,7 +214,7 @@
 									// in a structure compatible with the its JSON responses:
 									// the root is a dictionary with a single array item
 									// and all child elements in the entire tree
-									// are stored in a single array item on their parent
+									// are stored in array items on their parent keyed by their element name
 									responseObject = [delegate onlyChild];
 								}
 								delegate = nil;
@@ -207,19 +224,19 @@
 								
 								ApiData *data = item;
 								if (data)
-									[data updateFromJSON:responseObject];
+									[data updateFromResponse:responseObject];
 								else
-									data = [ApiData itemForJSON:responseObject verb:verb params:params];
+									data = [ApiData itemForResponse:responseObject verb:verb params:params];
 								if (data) {
 									if (success)
 										success(data);
 								}
 								else {
-									NSError *error = [self error_JSON_import_failed];
+									NSError *error = [self error_response_import_failed];
 									if (failure)
 										failure(error);
 									else
-										NSLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
+										MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 								}
 							}
 					 
@@ -227,18 +244,19 @@
 								if (failure)
 									failure(error);
 								else
-									NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+									MyLog(@"%s %@", __FUNCTION__, [error localizedDescription]);
 							}];
 	MyLog(@" request URL = '%@'", url);
 }
 
 + (void)log_task:(NSURLSessionDataTask *)task {
+#ifdef DEBUG
 	NSURLRequest *request = [task originalRequest];
 	NSURL *url = request.URL;
 	NSString *requestStr = [url absoluteString];
 	MyLog(@" request = '%@'", requestStr);
 	
-#ifdef DEBUG
+#if DEBUG_logHeadersHTTP
 	// log HTTP headers in request and response
 	MyLog(@"\n requestHeaders = %@\n", [request allHTTPHeaderFields]);
 	
@@ -247,6 +265,7 @@
 		NSDictionary *headers = [(NSHTTPURLResponse *)response allHeaderFields];
 		MyLog(@" responseHeaders = %@", headers);
 	}
+#endif
 #endif
 }
 

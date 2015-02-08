@@ -18,6 +18,8 @@
 
 #import <Foundation/Foundation.h>
 
+#define MBTA_RZImport_ErrorDomain	@"ServiceMBTA-RZImport ErrorDomain"
+
 // ----------------------------------------------------------------------
 @interface ServiceMBTA : NSObject
 // ----------------------------------------------------------------------
@@ -35,7 +37,6 @@
 
 + (NSError *)error_unknown;
 + (NSError *)error_notApiData;
-+ (NSError *)error_tooManyItems;
 
 // ----------------------------------------------------------------------
 @end

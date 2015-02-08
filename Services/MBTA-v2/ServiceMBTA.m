@@ -10,9 +10,8 @@
 
 #import "ServiceMBTA_strings.h"
 
-#define str_error_unknown		@"Service MBTA: Request failed, unknown error."
-#define str_error_notApiData	@"Service MBTA: Request returned invalid data type(s)."
-#define str_error_tooManyItems	@"Service MBTA: Request for single item returned multiple items."
+#define str_error_unknown		@"ServiceMBTA: Request failed, unknown error."
+#define str_error_notApiData	@"ServiceMBTA: Request returned invalid data type(s)."
 
 NSString * const str_BaseURL = @"http://realtime.mbta.com/developer/api/v2/";
 
@@ -147,21 +146,15 @@ static NSUInteger num_xml_replys = sizeof(xml_replys)/sizeof(xml_replys[0]);
 // ----------------------------------------------------------------------
 
 + (NSError *)error_unknown {
-	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
+	return [[NSError alloc] initWithDomain:MBTA_RZImport_ErrorDomain
 									  code:-1
 								  userInfo:@{ NSLocalizedDescriptionKey : str_error_unknown }];
 }
 
 + (NSError *)error_notApiData {
-	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
+	return [[NSError alloc] initWithDomain:MBTA_RZImport_ErrorDomain
 									  code:-2
 								  userInfo:@{ NSLocalizedDescriptionKey : str_error_notApiData }];
-}
-
-+ (NSError *)error_tooManyItems {
-	return [[NSError alloc] initWithDomain:MBTA_APIs_ErrorDomain
-									  code:-3
-								  userInfo:@{ NSLocalizedDescriptionKey : str_error_tooManyItems }];
 }
 
 // --------------------------------------------------

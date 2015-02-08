@@ -36,9 +36,9 @@
 			 };
 }
 
-// compares 'cur_stops' (objects) with 'a_stops' (deserialized JSONs),
+// compares 'cur_stops' (objects) with 'a_stops' (deserialized JSON/XML),
 // updating those that match and replacing those that don't
-#warning TODO update this for new sub-classes of ApiStop as they're created
+#warning TODO update this for each new sub-class of ApiStop as they're created
 + (NSArray *)updateStops:(NSArray *)cur_stops withStops:(NSArray *)a_stops forClass:(id)class_of_ApiStop {
 	NSArray *result = nil;
 	if ([cur_stops count] == 0) { // no existing stops (creating new stopsbylocation object)
@@ -64,9 +64,9 @@
 				[new_stops addObject:new_stop];
 			}
 		}
-		// stops *not* in json are discarded (from existing ApiStopsByLocation object)
+		// stops *not* in response are discarded (from existing ApiStopsByLocation object)
 		result = [NSArray arrayWithArray:updated_stops];
-		// new stops in json are added (*all* if this is new ApiStopsByLocation object)
+		// new stops in response are added (*all* if this is new ApiStopsByLocation object)
 		result = [result arrayByAddingObjectsFromArray:new_stops];
 	}
 	return result;
@@ -112,42 +112,49 @@
 	NSDictionary *params = @{ param_route : routeID };
 	
 	[ApiData get_item:verb_stopsbyroute params:params success:^(ApiData *item) {
-		ApiStopsByRoute *stopsbyroute = (ApiStopsByRoute *)item;
-		stopsbyroute.routeID = routeID;
-		if (success) {
-			success(stopsbyroute);
+		if (item && [item isKindOfClass:[ApiStopsByRoute class]]) {
+			ApiStopsByRoute *stopsbyroute = (ApiStopsByRoute *)item;
+			stopsbyroute.routeID = routeID;
+			if (success)
+				success(stopsbyroute);
+		}
+		else {
+			NSError *error = (item ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 - (void)update_success:(void(^)(ApiStopsByRoute *stops))success
 			   failure:(void(^)(NSError *error))failure {
 	[super internal_update_success:^(ApiData *item) {
-		NSAssert(item == self, @"Update failed to return original item.");
 		if (success)
 			success(self);
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'update' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
-- (instancetype)initWithJSON:(NSDictionary *)json {
+- (instancetype)initWithResponse:(NSDictionary *)response {
 	self = [super init];
 	if (self) {
-		[self updateFromJSON:json];
+		[self updateFromResponse:response];
 	}
 	return self;
 }
 
-- (void)updateFromJSON:(NSDictionary *)json {
-	NSArray *a_directions = [json objectForKey:key_direction];
+- (void)updateFromResponse:(NSDictionary *)response {
+	NSArray *a_directions = [response objectForKey:key_direction];
 	self.directions = [ApiRouteDirection updateDirections:self.directions withDirections:a_directions];
 }
 
@@ -177,42 +184,52 @@
 							};
 	
 	[ApiData get_item:verb_stopsbylocation params:params success:^(ApiData *item) {
-		if (success) {
-			ApiStopsByLocation *stopsbylocation = (ApiStopsByLocation *)item;
-			stopsbylocation.location = location;
-			success(stopsbylocation);
+		if (item && [item isKindOfClass:[ApiStopsByLocation class]]) {
+			if (success) {
+				ApiStopsByLocation *stopsbylocation = (ApiStopsByLocation *)item;
+				stopsbylocation.location = location;
+				success(stopsbylocation);
+			}
+		}
+		else {
+			NSError *error = (item ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
+// a real app would never 'update' an existing stops-by-location object
+// as a user's location is infinitely variable in two dimensions
 - (void)update_success:(void(^)(ApiStopsByLocation *stops))success
 			   failure:(void(^)(NSError *error))failure {
 	[super internal_update_success:^(ApiData *item) {
-		NSAssert(item == self, @"Update failed to return original item.");
 		if (success)
 			success(self);
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'update' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
-- (instancetype)initWithJSON:(NSDictionary *)json {
+- (instancetype)initWithResponse:(NSDictionary *)response {
 	self = [super init];
 	if (self) {
-		[self updateFromJSON:json];
+		[self updateFromResponse:response];
 	}
 	return self;
 }
 
-- (void)updateFromJSON:(NSDictionary *)json {
-	NSArray *a_stops = [json objectForKey:key_stop];
+- (void)updateFromResponse:(NSDictionary *)response {
+	NSArray *a_stops = [response objectForKey:key_stop];
 	self.stops = [ApiStop updateStops:self.stops withStops:a_stops forClass:[ApiStop class]];
 }
 

@@ -72,7 +72,7 @@ static NSUInteger	sSection_requests = 1;
 		@strongify(self)
 		[self show_success:servertime verb:verb_servertime section:sSection_gets];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_servertime section:sSection_gets];
 	}];
@@ -84,13 +84,12 @@ static NSUInteger	sSection_requests = 1;
 	@weakify(self)
 	[self.timeRequest refresh_success:^(ApiRequest *request) {
 		ApiData *time = [request response];
-		NSAssert([time isKindOfClass:[ApiTime class]], @"Wrong ApiData subclass returned by request.");
 		ApiTime *servertime = (ApiTime *)time;
 		MyLog(@"\n\n%s servertime = %@\n\n", __FUNCTION__, servertime);
 		@strongify(self)
 		[self show_success:servertime verb:verb_servertime section:sSection_requests];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_servertime section:sSection_requests];
 	}];
@@ -117,7 +116,7 @@ static NSUInteger	sSection_requests = 1;
 		@strongify(self)
 		[self show_success:routes verb:verb_routes section:sSection_gets];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_routes section:sSection_gets];
 	}];
@@ -126,12 +125,11 @@ static NSUInteger	sSection_requests = 1;
 	if (self.routes) {
 		@weakify(self)
 		[self.routes update_success:^(ApiRoutes *routes) {
-			NSAssert(routes == self.routes, @"Update failed to return original item.");
 			MyLog(@"\n\n%s routes = %@\n\n", __FUNCTION__, routes);
 			@strongify(self)
 			[self show_success:routes verb:verb_routes section:sSection_gets];
 		} failure:^(NSError *error) {
-			NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 			@strongify(self)
 			[self show_failure_verb:verb_routes section:sSection_gets];
 		}];
@@ -146,11 +144,10 @@ static NSUInteger	sSection_requests = 1;
 	@weakify(self)
 	[self.routesRequest refresh_success:^(ApiRequest *request) {
 		ApiRoutes *routes = (ApiRoutes *)[request response];
-		NSAssert([routes isKindOfClass:[ApiRoutes class]], @"Wrong ApiData subclass returned by request.");
 		@strongify(self)
 		[self show_success:routes verb:verb_routes section:sSection_requests];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_routes section:sSection_requests];
 	}];
@@ -167,7 +164,7 @@ static NSUInteger	sSection_requests = 1;
 		@strongify(self)
 		[self show_success:routes verb:verb_routesbystop section:sSection_gets];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_routesbystop section:sSection_gets];
 	}];
@@ -176,12 +173,11 @@ static NSUInteger	sSection_requests = 1;
 	if (self.routesByStop) {
 		@weakify(self)
 		[self.routesByStop update_success:^(ApiRoutesByStop *routes) {
-			NSAssert(routes == self.routesByStop, @"Update failed to return original item.");
 			MyLog(@"\n\n%s routesbystop = %@\n\n", __FUNCTION__, routes);
 			@strongify(self)
 			[self show_success:routes verb:verb_routesbystop section:sSection_gets];
 		} failure:^(NSError *error) {
-			NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 			@strongify(self)
 			[self show_failure_verb:verb_routesbystop section:sSection_gets];
 		}];
@@ -196,11 +192,10 @@ static NSUInteger	sSection_requests = 1;
 	@weakify(self)
 	[self.routesByStopRequest refresh_success:^(ApiRequest *request) {
 		ApiRoutesByStop *routes = (ApiRoutesByStop *)[request response];
-		NSAssert([routes isKindOfClass:[ApiRoutesByStop class]], @"Wrong ApiData subclass returned by request.");
 		@strongify(self)
 		[self show_success:routes verb:verb_routesbystop section:sSection_requests];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_routesbystop section:sSection_requests];
 	}];
@@ -220,7 +215,7 @@ static NSUInteger	sSection_requests = 1;
 				@strongify(self)
 				[self show_success:sRoute71 verb:verb_stopsbyroute section:sSection_gets];
 			} failure:^(NSError *error) {
-				NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+				NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 				@strongify(self)
 				[self show_failure_verb:verb_stopsbyroute section:sSection_gets];
 			}];
@@ -240,7 +235,7 @@ static NSUInteger	sSection_requests = 1;
 		@strongify(self)
 		[self show_success:stops verb:verb_stopsbyroute section:sSection_gets];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_stopsbyroute section:sSection_gets];
 	}];
@@ -252,11 +247,10 @@ static NSUInteger	sSection_requests = 1;
 #warning TODO
 		@weakify(self)
 		[sRoute71 updateStops_success:^(ApiRoute *route) {
-			NSAssert(route == sRoute71, @"Update failed to return original item.");
 			@strongify(self)
 			[self show_success:route verb:verb_stopsbyroute section:sSection_gets];
 		} failure:^(NSError *error) {
-			NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 			@strongify(self)
 			[self show_failure_verb:verb_stopsbyroute section:sSection_gets];
 		}];
@@ -267,12 +261,11 @@ static NSUInteger	sSection_requests = 1;
 	if (self.stopsByRoute) {
 		@weakify(self)
 		[self.stopsByRoute update_success:^(ApiStopsByRoute *stops) {
-			NSAssert(stops == self.stopsByRoute, @"Update failed to return original item.");
 			MyLog(@"\n\n%s stops = %@\n\n", __FUNCTION__, stops);
 			@strongify(self)
 			[self show_success:stops verb:verb_stopsbyroute section:sSection_gets];
 		} failure:^(NSError *error) {
-			NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 			@strongify(self)
 			[self show_failure_verb:verb_stopsbyroute section:sSection_gets];
 		}];
@@ -291,11 +284,10 @@ static NSUInteger	sSection_requests = 1;
 	@weakify(self)
 	[self.stopsByRouteRequest refresh_success:^(ApiRequest *request) {
 		ApiStopsByRoute *stops = (ApiStopsByRoute *)[request response];
-		NSAssert([stops isKindOfClass:[ApiStopsByRoute class]], @"Wrong ApiData subclass returned by request.");
 		@strongify(self)
 		[self show_success:stops verb:verb_stopsbyroute section:sSection_requests];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_routesbystop section:sSection_requests];
 	}];
@@ -313,11 +305,13 @@ static NSUInteger	sSection_requests = 1;
 		@strongify(self)
 		[self show_success:stops verb:verb_stopsbylocation section:sSection_gets];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_stopsbylocation section:sSection_gets];
 	}];
 }
+// a real app would never 'update' an existing stops-by-location object
+// as a user's location is infinitely variable in two dimensions
 - (void)update_stopsbylocation {
 	if (self.stopsByLocation) {
 		@weakify(self)
@@ -326,7 +320,7 @@ static NSUInteger	sSection_requests = 1;
 			@strongify(self)
 			[self show_success:stops verb:verb_stopsbylocation section:sSection_gets];
 		} failure:^(NSError *error) {
-			NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 			@strongify(self)
 			[self show_failure_verb:verb_stopsbylocation section:sSection_gets];
 		}];
@@ -341,11 +335,10 @@ static NSUInteger	sSection_requests = 1;
 	@weakify(self)
 	[self.stopsByLocationRequest refresh_success:^(ApiRequest *request) {
 		ApiStopsByLocation *stops = (ApiStopsByLocation *)[request response];
-		NSAssert([stops isKindOfClass:[ApiStopsByLocation class]], @"Wrong ApiData subclass returned by request.");
 		@strongify(self)
 		[self show_success:stops verb:verb_stopsbylocation section:sSection_requests];
 	} failure:^(NSError *error) {
-		NSLog(@"\n\n%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+		NSLog(@"\n\n%s %@", __FUNCTION__, [error localizedDescription]);
 		@strongify(self)
 		[self show_failure_verb:verb_stopsbylocation section:sSection_requests];
 	}];
@@ -418,6 +411,8 @@ static NSUInteger	sSection_requests = 1;
 		case e_verb_stopsbyroute:
 #if CONFIG_stops_update_route
 			enabled = (self.routes != nil && indexPath.section == 0); // only ever enabled for 'gets'
+#else
+			enabled = (indexPath.section == 1);
 #endif
 			break;
 		default:
@@ -441,10 +436,10 @@ static NSUInteger	sSection_requests = 1;
 	NSString *result = @"???";
 	switch (section) {
 		case 0:
-			result = @"get data";
+			result = @"get data (no caching)";
 			break;
 		case 1:
-			result = @"request data";
+			result = @"request data (with caching)";
 			break;
 		default:
 			break;
@@ -516,6 +511,7 @@ static NSUInteger	sSection_requests = 1;
 					[self get_stopsbylocation];
 				}
 				else
+					// but see comment above on this method
 					[self update_stopsbylocation];
 				break;
 				

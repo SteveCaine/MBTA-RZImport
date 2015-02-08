@@ -26,18 +26,26 @@
 + (void)get_success:(void(^)(ApiTime *data))success
 			failure:(void(^)(NSError *error))failure {
 	[ApiData get_item:verb_servertime params:nil success:^(ApiData *item) {
-		// TODO: validate that returned item IS ApiTime
-		if (success)
-			success((ApiTime *)item);
+		if (item && [item isKindOfClass:[ApiTime class]]) {
+			if (success)
+				success((ApiTime *)item);
+		}
+		else {
+			NSError *error = (item ? [ApiData error_wrong_subclass_ApiData] : [ApiData error_unknown]);
+			if (failure)
+				failure(error);
+			else
+				MyLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
+		}
 	} failure:^(NSError *error) {
 		if (failure)
 			failure(error);
 		else
-			NSLog(@"%s API call failed: %@", __FUNCTION__, [error localizedDescription]);
+			NSLog(@"%@ 'get' failed: %@", NSStringFromClass([self class]), [error localizedDescription]);
 	}];
 }
 
-// no '-updateFromJSON:' because we never *update* a servertime object; it's always time-sensitive
+// no '-updateFromResponse:' because we never *update* a servertime object; it's always time-sensitive
 
 - (NSDate *)time {
 	NSDate *result = nil;
