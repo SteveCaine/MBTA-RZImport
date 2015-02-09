@@ -92,6 +92,7 @@
 		8E9D5EC01A747B090074281A /* README.md */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		8EA387031A7DDC90001F010E /* ApiXMLParserDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiXMLParserDelegate.h; sourceTree = "<group>"; };
 		8EA387041A7DDC90001F010E /* ApiXMLParserDelegate.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiXMLParserDelegate.m; sourceTree = "<group>"; };
+		8EA7A7E61A8852120024027D /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		8EBDE8031A61C861007D37E7 /* ApiData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData.h; sourceTree = "<group>"; };
 		8EBDE8041A61C861007D37E7 /* ApiData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = ApiData.m; sourceTree = "<group>"; };
 		8EBDE8051A61C861007D37E7 /* ApiRoutes.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiRoutes.h; sourceTree = "<group>"; };
@@ -159,6 +160,7 @@
 			isa = PBXGroup;
 			children = (
 				8EC347271A883B3600DF0323 /* README.md */,
+				8EA7A7E61A8852120024027D /* LICENSE */,
 				8E9D5E7E1A747B090074281A /* DebugUtil */,
 				8EBDE8001A61C861007D37E7 /* Services */,
 				8EFBEB2B1A61D7C000C55B5A /* xtras */,
@@ -247,8 +249,9 @@
 				8E9D5EBF1A747B090074281A /* LICENSE */,
 				8E9D5EC01A747B090074281A /* README.md */,
 			);
-			path = DebugUtil;
-			sourceTree = "<group>";
+			name = DebugUtil;
+			path = ../DebugUtil;
+			sourceTree = SOURCE_ROOT;
 		};
 		8EBDE8001A61C861007D37E7 /* Services */ = {
 			isa = PBXGroup;
