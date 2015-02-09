@@ -50,7 +50,13 @@
 		if ([jsonName length])
 			(void) [AppDelegate cacheResponse:data asFile:jsonName];
 	}
-	
+
+	// SPC 2015-01-30 write raw response to Xcode debugger console
+#if DEBUG_logRawResponse
+	NSString *text = [[NSString alloc] initWithData:data encoding:NSUTF8StringEncoding];
+	NSLog(@"\n\nraw response = '%@'\n\n", text);
+#endif
+
 	return (JSONObject);
 }
 

@@ -41,20 +41,12 @@ typedef struct { CLLocationDegrees latitude; CLLocationDegrees longitude; } CLLo
 
 #define DEBUG_logHeadersHTTP		0
 
+#define DEBUG_logRawResponse		1
+
 // in our 'AF...ResponseSerializerWithData' classes,
 // if '-[ApiRequest keyForRequest:]' returns an empty string,
 // save the raw response in a file named for the date-time
 // (for debugging, but this will also save responses we've chosen not to cache)
 #define DEBUG_saveKeylessResponses	0
-
-// the compile-time flag below needs to be in the 'Pods' Xcode project, specifically in file
-//		./Pods/AFNetworking/Support Files/Pods-AFNetworking-prefix.pch
-// the added code it controls is here in the Xcode PROJECT (not the same as the filesystem path!)
-//		./Pods/AFNetworking/NSURLSession/AFURLResponseSerialization.m
-// in method '-URLSession:task:didCompleteWithError:'
-//
-//#ifdef DEBUG
-//#define DEBUG_logRawResponse		1
-//#endif
 
 #endif
