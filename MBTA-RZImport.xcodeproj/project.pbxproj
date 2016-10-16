@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		146DB4B75AAC2218E7E62EA3 /* libPods-MBTA-RZImport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 1442565DB20A51B43B0E7105 /* libPods-MBTA-RZImport.a */; };
 		8E2EFBDC1A8015E200675A11 /* ApiTimeRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */; };
 		8E2EFBDD1A8015F000675A11 /* ApiRoutesRequests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EE864F41A6303B5001D3871 /* ApiRoutesRequests.m */; };
 		8E2EFBDE1A80160000675A11 /* ApiRequest.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB321A61DA3300C55B5A /* ApiRequest.m */; };
@@ -40,7 +41,7 @@
 		8EBDE8161A61C861007D37E7 /* ServiceMBTA_strings.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EBDE8101A61C861007D37E7 /* ServiceMBTA_strings.m */; };
 		8EFBEB2A1A61CD6500C55B5A /* RequestClient.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB291A61CD6500C55B5A /* RequestClient.m */; };
 		8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EFBEB2D1A61D7C000C55B5A /* EXTScope.m */; };
-		CD24D195C775130604AC385B /* libPods-MBTA-RZImport.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */; };
+		BA3311DC1C101913B65EBF41 /* libPods-MBTA-RZImportTests.a in Frameworks */ = {isa = PBXBuildFile; fileRef = FD3EF6CADF9477001ECDC78C /* libPods-MBTA-RZImportTests.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -54,8 +55,9 @@
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
-		19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MBTA-RZImport.a"; sourceTree = BUILT_PRODUCTS_DIR; };
-		75AE2E2D8EE10D8D2521C6D4 /* Pods-MBTA-RZImport.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.debug.xcconfig"; sourceTree = "<group>"; };
+		1442565DB20A51B43B0E7105 /* libPods-MBTA-RZImport.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MBTA-RZImport.a"; sourceTree = BUILT_PRODUCTS_DIR; };
+		50464A2DA2CD9C80E32ED355 /* Pods-MBTA-RZImport.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.debug.xcconfig"; sourceTree = "<group>"; };
+		6D439A3C077BED20D8C23A66 /* Pods-MBTA-RZImport.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.release.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.release.xcconfig"; sourceTree = "<group>"; };
 		8E3593AE1A8042E800F8704B /* ApiStopsRequests.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiStopsRequests.h; path = Requests/ApiStopsRequests.h; sourceTree = "<group>"; };
 		8E3593AF1A8042E800F8704B /* ApiStopsRequests.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiStopsRequests.m; path = Requests/ApiStopsRequests.m; sourceTree = "<group>"; };
 		8E4BD7221A61AB1300B51B0B /* MBTA-RZImport.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "MBTA-RZImport.app"; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -119,7 +121,9 @@
 		8EFBEB351A61DAD200C55B5A /* ApiTimeRequest.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = ApiTimeRequest.m; path = Requests/ApiTimeRequest.m; sourceTree = "<group>"; };
 		8EFBEB371A61E1A400C55B5A /* ApiRequest_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = ApiRequest_private.h; path = Requests/ApiRequest_private.h; sourceTree = "<group>"; };
 		8EFBEB3B1A61EA0100C55B5A /* ApiData_private.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = ApiData_private.h; sourceTree = "<group>"; };
-		EE414054C5551A8C196569B2 /* Pods-MBTA-RZImport.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImport.release.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport.release.xcconfig"; sourceTree = "<group>"; };
+		BC9E9357771EF9FA2651C497 /* Pods-MBTA-RZImportTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImportTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImportTests/Pods-MBTA-RZImportTests.release.xcconfig"; sourceTree = "<group>"; };
+		DA36827F956594053F10758F /* Pods-MBTA-RZImportTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-MBTA-RZImportTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-MBTA-RZImportTests/Pods-MBTA-RZImportTests.debug.xcconfig"; sourceTree = "<group>"; };
+		FD3EF6CADF9477001ECDC78C /* libPods-MBTA-RZImportTests.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-MBTA-RZImportTests.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -130,7 +134,7 @@
 				8E4BD7281A61AB1300B51B0B /* CoreGraphics.framework in Frameworks */,
 				8E4BD72A1A61AB1300B51B0B /* UIKit.framework in Frameworks */,
 				8E4BD7261A61AB1300B51B0B /* Foundation.framework in Frameworks */,
-				CD24D195C775130604AC385B /* libPods-MBTA-RZImport.a in Frameworks */,
+				146DB4B75AAC2218E7E62EA3 /* libPods-MBTA-RZImport.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -141,21 +145,13 @@
 				8E4BD7481A61AB1300B51B0B /* XCTest.framework in Frameworks */,
 				8E4BD74A1A61AB1300B51B0B /* UIKit.framework in Frameworks */,
 				8E4BD7491A61AB1300B51B0B /* Foundation.framework in Frameworks */,
+				BA3311DC1C101913B65EBF41 /* libPods-MBTA-RZImportTests.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
-		3EB867A868928850C3666093 /* Pods */ = {
-			isa = PBXGroup;
-			children = (
-				75AE2E2D8EE10D8D2521C6D4 /* Pods-MBTA-RZImport.debug.xcconfig */,
-				EE414054C5551A8C196569B2 /* Pods-MBTA-RZImport.release.xcconfig */,
-			);
-			name = Pods;
-			sourceTree = "<group>";
-		};
 		8E4BD7191A61AB1300B51B0B = {
 			isa = PBXGroup;
 			children = (
@@ -168,7 +164,7 @@
 				8E4BD74D1A61AB1300B51B0B /* MBTA-RZImportTests */,
 				8E4BD7241A61AB1300B51B0B /* Frameworks */,
 				8E4BD7231A61AB1300B51B0B /* Products */,
-				3EB867A868928850C3666093 /* Pods */,
+				AB70C4E3C00DC0103D765E03 /* Pods */,
 			);
 			sourceTree = "<group>";
 		};
@@ -188,7 +184,8 @@
 				8E4BD7271A61AB1300B51B0B /* CoreGraphics.framework */,
 				8E4BD7291A61AB1300B51B0B /* UIKit.framework */,
 				8E4BD7471A61AB1300B51B0B /* XCTest.framework */,
-				19556F2F62DCE4A791979607 /* libPods-MBTA-RZImport.a */,
+				1442565DB20A51B43B0E7105 /* libPods-MBTA-RZImport.a */,
+				FD3EF6CADF9477001ECDC78C /* libPods-MBTA-RZImportTests.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -332,6 +329,17 @@
 			name = Requests;
 			sourceTree = "<group>";
 		};
+		AB70C4E3C00DC0103D765E03 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				50464A2DA2CD9C80E32ED355 /* Pods-MBTA-RZImport.debug.xcconfig */,
+				6D439A3C077BED20D8C23A66 /* Pods-MBTA-RZImport.release.xcconfig */,
+				DA36827F956594053F10758F /* Pods-MBTA-RZImportTests.debug.xcconfig */,
+				BC9E9357771EF9FA2651C497 /* Pods-MBTA-RZImportTests.release.xcconfig */,
+			);
+			name = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -339,11 +347,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8E4BD7571A61AB1300B51B0B /* Build configuration list for PBXNativeTarget "MBTA-RZImport" */;
 			buildPhases = (
-				F1BBA38B601AE198B3C00B56 /* Check Pods Manifest.lock */,
+				B4E22660AF9F90F608AA6EF2 /* [CP] Check Pods Manifest.lock */,
 				8E4BD71E1A61AB1300B51B0B /* Sources */,
 				8E4BD71F1A61AB1300B51B0B /* Frameworks */,
 				8E4BD7201A61AB1300B51B0B /* Resources */,
-				9CBFEFDECA0CABBB4573D998 /* Copy Pods Resources */,
+				0DA6836885FE9407EC81C2CA /* [CP] Embed Pods Frameworks */,
+				065BD93A27A674FD6C7B1CE2 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -358,9 +367,12 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 8E4BD75A1A61AB1300B51B0B /* Build configuration list for PBXNativeTarget "MBTA-RZImportTests" */;
 			buildPhases = (
+				634B053A5A2E220C6F46B33C /* [CP] Check Pods Manifest.lock */,
 				8E4BD7421A61AB1300B51B0B /* Sources */,
 				8E4BD7431A61AB1300B51B0B /* Frameworks */,
 				8E4BD7441A61AB1300B51B0B /* Resources */,
+				2F0F250F1D1C58011AD2E886 /* [CP] Embed Pods Frameworks */,
+				86F89A573BEAC99D92269706 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -427,14 +439,14 @@
 /* End PBXResourcesBuildPhase section */
 
 /* Begin PBXShellScriptBuildPhase section */
-		9CBFEFDECA0CABBB4573D998 /* Copy Pods Resources */ = {
+		065BD93A27A674FD6C7B1CE2 /* [CP] Copy Pods Resources */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Copy Pods Resources";
+			name = "[CP] Copy Pods Resources";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -442,14 +454,74 @@
 			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport-resources.sh\"\n";
 			showEnvVarsInLog = 0;
 		};
-		F1BBA38B601AE198B3C00B56 /* Check Pods Manifest.lock */ = {
+		0DA6836885FE9407EC81C2CA /* [CP] Embed Pods Frameworks */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
 			);
 			inputPaths = (
 			);
-			name = "Check Pods Manifest.lock";
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MBTA-RZImport/Pods-MBTA-RZImport-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		2F0F250F1D1C58011AD2E886 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MBTA-RZImportTests/Pods-MBTA-RZImportTests-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		634B053A5A2E220C6F46B33C /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_ROOT}/../Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [[ $? != 0 ]] ; then\n    cat << EOM\nerror: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\nEOM\n    exit 1\nfi\n";
+			showEnvVarsInLog = 0;
+		};
+		86F89A573BEAC99D92269706 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-MBTA-RZImportTests/Pods-MBTA-RZImportTests-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+		B4E22660AF9F90F608AA6EF2 /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			name = "[CP] Check Pods Manifest.lock";
 			outputPaths = (
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -607,7 +679,7 @@
 		};
 		8E4BD7581A61AB1300B51B0B /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = 75AE2E2D8EE10D8D2521C6D4 /* Pods-MBTA-RZImport.debug.xcconfig */;
+			baseConfigurationReference = 50464A2DA2CD9C80E32ED355 /* Pods-MBTA-RZImport.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -621,7 +693,7 @@
 		};
 		8E4BD7591A61AB1300B51B0B /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = EE414054C5551A8C196569B2 /* Pods-MBTA-RZImport.release.xcconfig */;
+			baseConfigurationReference = 6D439A3C077BED20D8C23A66 /* Pods-MBTA-RZImport.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_LAUNCHIMAGE_NAME = LaunchImage;
@@ -635,6 +707,7 @@
 		};
 		8E4BD75B1A61AB1300B51B0B /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = DA36827F956594053F10758F /* Pods-MBTA-RZImportTests.debug.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MBTA-RZImport.app/MBTA-RZImport";
 				FRAMEWORK_SEARCH_PATHS = (
@@ -657,6 +730,7 @@
 		};
 		8E4BD75C1A61AB1300B51B0B /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = BC9E9357771EF9FA2651C497 /* Pods-MBTA-RZImportTests.release.xcconfig */;
 			buildSettings = {
 				BUNDLE_LOADER = "$(BUILT_PRODUCTS_DIR)/MBTA-RZImport.app/MBTA-RZImport";
 				FRAMEWORK_SEARCH_PATHS = (

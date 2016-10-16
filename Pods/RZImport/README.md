@@ -2,6 +2,7 @@ RZImport
 ============
 
 [![Build Status](https://travis-ci.org/Raizlabs/RZImport.svg)](https://travis-ci.org/Raizlabs/RZImport)
+[![Version](https://img.shields.io/cocoapods/v/RZImport.svg?style=flat)](http://cocoadocs.org/docsets/RZImport)
 
 Tired of writing boilerplate to import deserialized API responses to model objects?
 
@@ -125,7 +126,7 @@ You can also update an existing object instance from a dictionary.
 
 ```obj-c
 Person *myPerson = self.person;
-[myPerson rzi_updateFromDictionary:someDictionary];
+[myPerson rzi_importValuesFromDict:someDictionary];
 ```
 
 ### Custom Mappings
@@ -249,6 +250,23 @@ RZImport uses the default designated initializer `init` when it creates new obje
 For example, RZImport cannot be used out-of-the-box to create valid instances of a subclass of `NSManagedObject`, since managed objects must be initialized with an entity description. However, there is no reason it will not work for updating existing instances of a subclass of `NSManagedObject` from a dictionary, or by overriding `+rzi_existingObjectForDict` to return a new object inserted into the correct managed object context.
 
 **If you are interested in using RZImport with CoreData, check out [RZVinyl](https://github.com/Raizlabs/RZVinyl)**
+
+## Maintainers
+[arrouse](https://github.com/arrouse) ([@arrouse88](http://twitter.com/arrouse88))
+
+[nbonatsakis](https://github.com/nbonatsakis) ([@nickbona](http://twitter.com/nickbona))
+
+[KingOfBrian](https://github.com/KingOfBrian) ([@KingOfBrian](http://twitter.com/KingOfBrian))
+
+[mattThousand](https://github.com/mattThousand) ([@mattThousand ](http://twitter.com/mattThousand))
+
+[SpencerP](https://github.com/SpencerP)
+
+[LFabien](https://github.com/LFabien)
+
+## Contributors
+
+[ndonald2](https://github.com/ndonald2) ([@infrasonick](http://twitter.com/infrasonick)) 
 
 ## License
 

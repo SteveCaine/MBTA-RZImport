@@ -74,7 +74,7 @@
 	//	MyLog(@"   path = '%@'", path);
 	//	MyLog(@" result = '%@'", result);
 	
-	[self GET:path parameters:nil success:^(NSURLSessionDataTask *task, id responseObject) {
+    [self GET:path parameters:nil progress:nil success:^(NSURLSessionDataTask *task, id responseObject) {
 		if (success) {
 			success(task, responseObject);
 		}

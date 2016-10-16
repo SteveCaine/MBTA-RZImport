@@ -1,10 +1,10 @@
 source 'https://github.com/CocoaPods/Specs.git'
 
-platform :ios, "7.0"
+platform :ios, "7.1"
 
 target 'MBTA-RZImport' do
-	pod 'AFNetworking', '~> 2.5.0'
-	pod 'RZImport', 	'~> 1.0'
+	pod 'AFNetworking'
+	pod 'RZImport'
 end
 
 target 'MBTA-RZImportTests' do

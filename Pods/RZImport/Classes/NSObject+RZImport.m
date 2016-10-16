@@ -28,8 +28,7 @@
 
 #import "NSObject+RZImport.h"
 #import "NSObject+RZImport_Private.h"
-#import <objc/runtime.h>
-
+@import ObjectiveC.runtime;
 
 static NSString* const kRZImportISO8601DateFormat = @"yyyy-MM-dd'T'HH:mm:ss'Z'";
 
@@ -100,7 +99,11 @@ static RZIPropertyInfo *rzi_propertyInfoForProperty( NSString *propertyName, Cla
             }
         }
             break;
-            
+
+        case _C_BOOL:
+            propertyInfo.dataType = RZImportDataTypeBoolean;
+            break;
+
             // Primitive type
         case _C_CHR:
         case _C_UCHR:
@@ -114,7 +117,6 @@ static RZIPropertyInfo *rzi_propertyInfoForProperty( NSString *propertyName, Cla
         case _C_ULNG_LNG:
         case _C_FLT:
         case _C_DBL:
-        case _C_BOOL:
             propertyInfo.dataType = RZImportDataTypePrimitive;
             break;
             
@@ -332,15 +334,28 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
     BOOL canOverrideImports = [self respondsToSelector:@selector( rzi_shouldImportValue:forKey: )];
     
     NSSet *ignoredKeys = [[self class] rzi_cachedIgnoredKeys];
-    
-    [dict enumerateKeysAndObjectsUsingBlock:^(NSString *key, id value, BOOL *stop) {
-    
+    NSOrderedSet *orderedKeys = [[self class] rzi_cachedOrderedKeys];
+
+    NSArray *dictKeys = dict.allKeys;
+
+    if ( orderedKeys.count > 0 ) {
+        dictKeys = [dictKeys sortedArrayUsingComparator:^NSComparisonResult(id obj1, id obj2) {
+            NSUInteger idx1 = [orderedKeys indexOfObject:obj1];
+            NSUInteger idx2 = [orderedKeys indexOfObject:obj2];
+
+            return [@(idx1) compare:@(idx2)];
+        }];
+    }
+
+    [dictKeys enumerateObjectsUsingBlock:^(NSString *key, NSUInteger idx, BOOL *stop) {
+        id value = dict[key];
+
         if ( canOverrideImports && ![ignoredKeys containsObject:key] ) {
             if ( ![(id<RZImportable>)self rzi_shouldImportValue:value forKey:key] ) {
                 return;
             }
         }
-        
+
         [self rzi_importValue:value forKey:key withMappings:mappings ignoredKeys:ignoredKeys];
     }];
 }
@@ -392,7 +407,7 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
         [self rzi_importValuesFromNestedDict:value withKeyPathPrefix:key mappings:mappings ignoredKeys:ignoredKeys];
     }
     else {
-        [[self class] rzi_logUnknownKeyWarningForKey:key];
+        [self rzi_foundUnhandledValue:value forKey:key];
     }
 }
 
@@ -405,6 +420,11 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
         NSString *keyPath = [NSString stringWithFormat:@"%@.%@", keypathPrefix, key];
         [self rzi_importValue:value forKey:keyPath withMappings:mappings ignoredKeys:ignoredKeys];
     }];
+}
+
+- (void)rzi_foundUnhandledValue:(id)value forKey:(NSString *)key
+{
+    [[self class] rzi_logUnknownKeyWarningForKey:key];
 }
 
 + (void)rzi_performBlockAtomicallyAndWait:(BOOL)wait block:(void(^)())block
@@ -467,6 +487,27 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
     return nestedKeys;
 }
 
++ (NSOrderedSet *)rzi_cachedOrderedKeys
+{
+    static void * kRZIOrderedKeysAssocKey = &kRZIOrderedKeysAssocKey;
+    __block NSOrderedSet *orderedKeys = nil;
+    [self rzi_performBlockAtomicallyAndWait:YES block:^{
+        orderedKeys = objc_getAssociatedObject(self, kRZIOrderedKeysAssocKey);
+        if ( orderedKeys == nil ) {
+            if ( [self respondsToSelector:@selector( rzi_orderedKeys )] ) {
+                Class <RZImportable> thisClass = self;
+                orderedKeys = [NSOrderedSet orderedSetWithArray:[thisClass rzi_orderedKeys]];
+            }
+            else {
+                // !!!: empty set so cache does not fault again
+                orderedKeys = [NSOrderedSet orderedSet];
+            }
+            objc_setAssociatedObject(self, kRZIOrderedKeysAssocKey, orderedKeys, OBJC_ASSOCIATION_RETAIN_NONATOMIC);
+        }
+    }];
+    return orderedKeys;
+}
+
 // !!!: this method is not threadsafe
 + (NSDictionary *)rzi_importMappings
 {
@@ -505,25 +546,38 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
 + (NSDictionary *)rzi_normalizedPropertyMappings
 {
     NSMutableDictionary *mappings = [NSMutableDictionary dictionary];
-    
-    Class currentClass = self;
-    while ( currentClass != Nil ) {
-        
-        NSString *className = NSStringFromClass(currentClass);
-        
-        if ( ![[self s_rzi_ignoredClasses] containsObject:className] ) {
-            NSArray *classPropNames = rzi_propertyNamesForClass(currentClass);
-            [classPropNames enumerateObjectsUsingBlock:^(NSString *classPropName, NSUInteger idx, BOOL *stop) {
-                RZIPropertyInfo *propInfo = [self rzi_cachedPropertyInfoForPropertyName:classPropName];
-                if ( propInfo != nil ) {
-                    [mappings setObject:propInfo forKey:rzi_normalizedKey(classPropName)];
-                }
-            }];
-        }
-        
-        currentClass = class_getSuperclass( currentClass );
+    NSArray *propertyNames = nil;
+
+    if ( [self respondsToSelector:@selector(rzi_propertyNames)] ) {
+        RZILogDebug(@"Using property name overrides for class: %@", [self class]);
+        Class <RZImportable> thisClass = self;
+        propertyNames = [thisClass rzi_propertyNames];
     }
-    
+    else {
+        Class currentClass = self;
+        NSMutableArray *names = [NSMutableArray array];
+        while ( currentClass != Nil ) {
+
+            NSString *className = NSStringFromClass(currentClass);
+
+            if ( ![[self s_rzi_ignoredClasses] containsObject:className] ) {
+                NSArray *classPropNames = rzi_propertyNamesForClass(currentClass);
+                [names addObjectsFromArray:classPropNames];
+            }
+
+            currentClass = class_getSuperclass( currentClass );
+        }
+
+        propertyNames = [names copy];
+    }
+
+    [propertyNames enumerateObjectsUsingBlock:^(NSString *classPropName, NSUInteger idx, BOOL *stop) {
+        RZIPropertyInfo *propInfo = [self rzi_cachedPropertyInfoForPropertyName:classPropName];
+        if ( propInfo != nil ) {
+            [mappings setObject:propInfo forKey:rzi_normalizedKey(classPropName)];
+        }
+    }];
+
     return [NSDictionary dictionaryWithDictionary:mappings];
 }
 
@@ -601,6 +655,7 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
                 switch (propDescriptor.dataType) {
                         
                     case RZImportDataTypeNSNumber:
+                    case RZImportDataTypeBoolean:
                     case RZImportDataTypePrimitive:
                         convertedValue = value;
                         break;
@@ -612,11 +667,6 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
                     case RZImportDataTypeNSDate: {
                         // Assume it's a unix timestamp
                         convertedValue = [NSDate dateWithTimeIntervalSince1970:[value doubleValue]];
-                        
-                        RZILogDebug(@"Received a number for key [%@] matching property [%@] of class [%@]. Assuming unix timestamp.",
-                                     originalKey,
-                                     propDescriptor.propertyName,
-                                     NSStringFromClass([self class]));
                     }
                         break;
                         
@@ -643,6 +693,10 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
                         convertedValue = value;
                         break;
                         
+                    case RZImportDataTypeBoolean:
+                        convertedValue = @([value boolValue]);
+                        break;
+
                     case RZImportDataTypeNSDate: {
                         // Check for a date format from the object. If not provided, use ISO-8601.
                         __block NSDate *date = nil;
@@ -667,7 +721,7 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
                         
                     }
                         break;
-                        
+
                     default:
                         break;
                 }
@@ -688,7 +742,12 @@ RZImportDataType rzi_dataTypeFromClass(Class objClass)
                     convertedValue = [propDescriptor.propertyClass rzi_objectFromDictionary:value];
                 }
             }
-            
+
+            // If the value can fall through without conversion, allow it.
+            if ( [value isKindOfClass:propDescriptor.propertyClass] && convertedValue == nil ) {
+                convertedValue = value;
+            }
+
             if ( convertedValue ) {
                 NSObject *currentValue = [self valueForKey:propDescriptor.propertyName];
                 if ( [currentValue isEqual:convertedValue] == NO ) {
