@@ -29,7 +29,7 @@
 		8E4BD7541A61AB1300B51B0B /* MBTA_RZImportTests.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E4BD7531A61AB1300B51B0B /* MBTA_RZImportTests.m */; };
 		8E57D7A41A854D40002F0C6D /* AFJSONResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E57D7A31A854D40002F0C6D /* AFJSONResponseSerializerWithData.m */; };
 		8E57D7A71A857A2B002F0C6D /* AFXMLParserResponseSerializerWithData.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E57D7A61A857A2B002F0C6D /* AFXMLParserResponseSerializerWithData.m */; };
-		8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E821A747B090074281A /* Debug_iOS.cpp */; };
+		8E6263CF1EB2830E00B374F4 /* Debug_ObjC.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E6263CE1EB2830E00B374F4 /* Debug_ObjC.m */; };
 		8E9D5EC41A747B090074281A /* Debug_iOS.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E841A747B090074281A /* Debug_iOS.m */; };
 		8E9D5EC51A747B090074281A /* Debug_JSON.m in Sources */ = {isa = PBXBuildFile; fileRef = 8E9D5E861A747B090074281A /* Debug_JSON.m */; };
 		8EA387051A7DDC90001F010E /* ApiXMLParserDelegate.m in Sources */ = {isa = PBXBuildFile; fileRef = 8EA387041A7DDC90001F010E /* ApiXMLParserDelegate.m */; };
@@ -85,7 +85,8 @@
 		8E57D7A31A854D40002F0C6D /* AFJSONResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFJSONResponseSerializerWithData.m; sourceTree = "<group>"; };
 		8E57D7A51A857A2B002F0C6D /* AFXMLParserResponseSerializerWithData.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = AFXMLParserResponseSerializerWithData.h; sourceTree = "<group>"; };
 		8E57D7A61A857A2B002F0C6D /* AFXMLParserResponseSerializerWithData.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = AFXMLParserResponseSerializerWithData.m; sourceTree = "<group>"; };
-		8E9D5E821A747B090074281A /* Debug_iOS.cpp */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.cpp; path = Debug_iOS.cpp; sourceTree = "<group>"; };
+		8E6263CD1EB2830E00B374F4 /* Debug_ObjC.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug_ObjC.h; sourceTree = "<group>"; };
+		8E6263CE1EB2830E00B374F4 /* Debug_ObjC.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug_ObjC.m; sourceTree = "<group>"; };
 		8E9D5E831A747B090074281A /* Debug_iOS.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug_iOS.h; sourceTree = "<group>"; };
 		8E9D5E841A747B090074281A /* Debug_iOS.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Debug_iOS.m; sourceTree = "<group>"; };
 		8E9D5E851A747B090074281A /* Debug_JSON.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = Debug_JSON.h; sourceTree = "<group>"; };
@@ -238,7 +239,8 @@
 		8E9D5E7E1A747B090074281A /* DebugUtil */ = {
 			isa = PBXGroup;
 			children = (
-				8E9D5E821A747B090074281A /* Debug_iOS.cpp */,
+				8E6263CD1EB2830E00B374F4 /* Debug_ObjC.h */,
+				8E6263CE1EB2830E00B374F4 /* Debug_ObjC.m */,
 				8E9D5E831A747B090074281A /* Debug_iOS.h */,
 				8E9D5E841A747B090074281A /* Debug_iOS.m */,
 				8E9D5E851A747B090074281A /* Debug_JSON.h */,
@@ -390,7 +392,7 @@
 		8E4BD71A1A61AB1300B51B0B /* Project object */ = {
 			isa = PBXProject;
 			attributes = {
-				LastUpgradeCheck = 0510;
+				LastUpgradeCheck = 0730;
 				ORGANIZATIONNAME = "Steve Caine";
 				TargetAttributes = {
 					8E4BD7451A61AB1300B51B0B = {
@@ -549,6 +551,7 @@
 				8E4BD73F1A61AB1300B51B0B /* DetailViewController.m in Sources */,
 				8EBDE8121A61C861007D37E7 /* ApiRoutes.m in Sources */,
 				8EFBEB2F1A61D7C000C55B5A /* EXTScope.m in Sources */,
+				8E6263CF1EB2830E00B374F4 /* Debug_ObjC.m in Sources */,
 				8E57D7A41A854D40002F0C6D /* AFJSONResponseSerializerWithData.m in Sources */,
 				8EBDE8141A61C861007D37E7 /* ApiTime.m in Sources */,
 				8EBDE8111A61C861007D37E7 /* ApiData.m in Sources */,
@@ -557,7 +560,6 @@
 				8E2EFBDD1A8015F000675A11 /* ApiRoutesRequests.m in Sources */,
 				8EBDE8131A61C861007D37E7 /* ApiStops.m in Sources */,
 				8EBDE8151A61C861007D37E7 /* ServiceMBTA.m in Sources */,
-				8E9D5EC31A747B090074281A /* Debug_iOS.cpp in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -625,6 +627,7 @@
 				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				COPY_PHASE_STRIP = NO;
+				ENABLE_TESTABILITY = YES;
 				GCC_C_LANGUAGE_STANDARD = gnu99;
 				GCC_DYNAMIC_NO_PIC = NO;
 				GCC_OPTIMIZATION_LEVEL = 0;
@@ -686,6 +689,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MBTA-RZImport/MBTA-RZImport-Prefix.pch";
 				INFOPLIST_FILE = "MBTA-RZImport/MBTA-RZImport-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SteveCaine.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -700,6 +704,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MBTA-RZImport/MBTA-RZImport-Prefix.pch";
 				INFOPLIST_FILE = "MBTA-RZImport/MBTA-RZImport-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SteveCaine.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				WRAPPER_EXTENSION = app;
 			};
@@ -722,6 +727,7 @@
 					"$(inherited)",
 				);
 				INFOPLIST_FILE = "MBTA-RZImportTests/MBTA-RZImportTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SteveCaine.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
@@ -741,6 +747,7 @@
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "MBTA-RZImport/MBTA-RZImport-Prefix.pch";
 				INFOPLIST_FILE = "MBTA-RZImportTests/MBTA-RZImportTests-Info.plist";
+				PRODUCT_BUNDLE_IDENTIFIER = "com.SteveCaine.${PRODUCT_NAME:rfc1034identifier}";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				TEST_HOST = "$(BUNDLE_LOADER)";
 				WRAPPER_EXTENSION = xctest;
