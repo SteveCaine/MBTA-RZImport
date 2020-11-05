@@ -1,9 +1,11 @@
 MBTA-RZImport
 =============
 
-This repository contains code that demonstrates how to access the Boston MBTA's new [RESTful web service](http://www.mbta.com/rider_tools/developers/) for information about the public transit agency's routes and services.
+***NOTE:*** *The MBTA has discontinued this API and replaced it with a JSON service that this project does not implement. Thus this project remains useful only in demonstrating how to parse the JSON and XML responses this service used to return, and how to structure code to make and receive the calls the past service provided. (updated Nov. 5, 2020)*
 
-It uses the open-source [RZImport](https://github.com/Raizlabs/RZImport) library to access the public API provided by version 2 of the MBTA-realtime RSS web service. The included demo app uses this library to execute the first five of the 20-plus queries provided by the MBTA service. 
+This repository contains code that demonstrates how to access the Boston MBTA's *former* [RESTful web service](http://www.mbta.com/rider_tools/developers/) for information about the public transit agency's routes and services.
+
+It uses the open-source [RZImport](https://github.com/Raizlabs/RZImport) library to access the public API *that was* provided by version 2 of the MBTA-realtime RSS web service. The included demo app uses this library to execute the first five of the 20-plus queries provided by the MBTA service. 
 
 This demo app offers two options: 
 
